@@ -1,7 +1,7 @@
 My README file!
 ===================
 
-![Banner](img/mig.jpeg)
+![Bild](img/mig.jpeg)
 
 ---
 
