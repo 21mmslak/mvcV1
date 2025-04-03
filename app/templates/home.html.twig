@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <h1>Home</h1>
+    <div class="profile-container">
+        <a href="{{ asset('img/mig.jpeg') }}">
+            <img class="profile-img" src="{{ asset('img/mig.jpeg') }}" alt="Bild på mig">
+        </a>
+
+        <p>
+            Jag heter Bobo och är 20 från Stockholm, jag jobbar heltid på ett företag som heter Court22 där man kan boka padel tider och andra racketsporter.
+            På Court22 jobbar jag främst med support men också testare av nya funktioner. Tanken är att ju längre jag kommer i utbildningen desto mer ska jag börja
+            hjälpa till med utveckling på bolaget. Eftersom det är ett techbolag har jag haft väldigt stor fördel genom kursens gång att kunna fråga kollegor om 
+            tips och råd, vilket varit guldvärt! På den lilla tid som finns kvar efter många timmar jobb och plugg (jag kan kombinera det rätt bra och plugga lite på jobbet osv) 
+            så gillar jag att gymma och hänga med vänner. :)
+        </p>
+    </div>
+{% endblock %}
