@@ -14,13 +14,12 @@ body {
     gap: 1.5rem;
     margin-top: 2rem;
 }
-  
+
 .profile-img {
     width: 200px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
-  
 
 footer {
     background: linear-gradient(to right, #1a2a45, #3974e2);
@@ -64,7 +63,6 @@ ul a:hover {
 h1 {
     border-bottom: 4px double #0022ff;
 }
-
 
 h2 {
     border-bottom: 4px double #0022ff;
