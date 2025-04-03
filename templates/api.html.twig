@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block title %}API{% endblock %}
+
+{% block body %}
+<h1>API</h1>
+<div class="profile-container">
+    <ul>
+        {% for route in api_routes %}
+            <li>
+                <a href="{{ route.path }}" style="color: blue;">{{ route.path }}</a> ({{ route.name }})
+            </li>
+        {% else %}
+            <li>Inga API hittades.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
