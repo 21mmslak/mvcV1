@@ -8,7 +8,7 @@
     <ul>
         {% for route in api_routes %}
             <li>
-                <a href="{{ route.path }}" style="color: blue;">{{ route.path }}</a> ({{ route.name }})
+                <a href="{{ path(route.name) }}" class="api-link">{{ route.path }}</a>
             </li>
         {% else %}
             <li>Inga API hittades.</li>

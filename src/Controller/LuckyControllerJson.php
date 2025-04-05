@@ -39,13 +39,22 @@ class LuckyControllerJson extends AbstractController
             ];
 
         $number = random_int(0, 2);
-
+        
+        date_default_timezone_set('Europe/Stockholm');
+        $time = date("h:i:s");
+        $date = date("Y-m-d");
+        $day = date("l");
 
         $data = [
-            'quote' => $quotes[$number]
+            'quote' => $quotes[$number],
+            'date' => $date,
+            'time' => $time,
+            'day' => $day
         ];
 
-        return new JsonResponse($data);
+        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        return new Response($json, 200, ['Content-Type' => 'application/json']);
     }
 
 
