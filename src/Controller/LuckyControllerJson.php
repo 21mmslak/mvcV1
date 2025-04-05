@@ -79,5 +79,4 @@ class LuckyControllerJson extends AbstractController
             'api_routes' => $apiRoutes,
         ]);
     }
-
 }
