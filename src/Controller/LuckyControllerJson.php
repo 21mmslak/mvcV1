@@ -10,7 +10,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class LuckyControllerJson extends AbstractController
 {
-    #[Route("/api/lucky/number")]
+    #[Route("/api/lucky/number", name: "lucky")]
     public function jsonNumber(): Response
     {
         $number = random_int(0, 100);
@@ -29,7 +29,7 @@ class LuckyControllerJson extends AbstractController
         return new JsonResponse($data);
     }
 
-    #[Route("/api/quote")]
+    #[Route("/api/quote", name: "quote")]
     public function jsonQuote(): Response
     {
         $quotes = [
@@ -39,7 +39,7 @@ class LuckyControllerJson extends AbstractController
             ];
 
         $number = random_int(0, 2);
-        
+
         date_default_timezone_set('Europe/Stockholm');
         $time = date("h:i:s");
         $date = date("Y-m-d");

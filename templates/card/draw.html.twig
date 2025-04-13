@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Draw{% endblock %}
+
+{% block body %}
+<h1>Draw</h1>
+
+<ul>
+    {% for card in drawn_cards %}
+        <li>{{ card.value }} of {{ card.suit }}</li>
+    {% endfor %}
+</ul>
+
+<p>Kvar i kortleken: {{ cards_left }}</p>
+
+{% endblock %}

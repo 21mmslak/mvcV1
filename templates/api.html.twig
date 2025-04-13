@@ -6,13 +6,21 @@
 <h1>API</h1>
 <div class="profile-container">
     <ul>
-        {% for route in api_routes %}
-            <li>
-                <a href="{{ path(route.name) }}" class="api-link">{{ route.path }}</a>
-            </li>
-        {% else %}
-            <li>Inga API hittades.</li>
-        {% endfor %}
+        <li><a href="{{ path('lucky') }}">Lucky number</a></li>
+        <li><a href="{{ path('quote') }}">Show quote</a></li>
+        <li><a href="{{ path('apiDeck') }}">Show a deck of card sorted</a></li>
+        <form action="{{ path('deck_shuffle_api') }}" method="POST">
+            <button type="submit">Shuffle deck and store to session</button>
+        </form>
+        <form action="{{ path('draw_one_card_api') }}" method="POST">
+            <button type="submit">Draw one card and get tot cards</button>
+        </form>
+        <form action="{{ path('draw_n_cards_api', { num: 1 }) }}" method="POST">
+            <button type="submit">Draw N(1 std) card and get tot cards</button>
+        </form>
+        <form action="{{ path('draw_n_cards_x_players_api', { play: 1, num: 1 }) }}" method="POST">
+            <button type="submit">Deal N(1 std) cards X(1 std) player</button>
+        </form>
     </ul>
 </div>
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Deal{% endblock %}
+
+{% block body %}
+<h1>Deal</h1>
+
+{% for player, cards in playerHand %}
+    <h2>{{ player }}</h2>
+    <ul>
+        {% for card in cards %}
+            <li>{{ card.value }} of {{ card.suit }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+<p>Kvar i kortleken: {{ cards_left }}</p>
+
+{% endblock %}

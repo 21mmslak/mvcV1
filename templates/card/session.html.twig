@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Card Game{% endblock %}
+
+{% block body %}
+<h1>Session info</h1>
+
+{{ include('flash.html.twig') }}
+
+{% if session is empty %}
+        <p>Sessionen är tom.</p>
+    {% else %}
+        <ul>
+            {% for key, value in session %}
+                <li>
+                    <strong>{{ key }}</strong>: 
+                    <pre>{{ value|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock %}
