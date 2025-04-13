@@ -4,6 +4,12 @@
 
 {% block body %}
 <h1>Card game</h1>
+<p>Card är basklassen med färg och siffra. CardGrafic ärver från Card och lägger till symboler (♥, ♠ osv).
+DeckOfCards innehåller en hel kortlek det är en komposition, eftersom kortleken äger korten.
+CardHand representerar en spelares hand och har också en komposition med Card, eftersom handen består av specifika kort.</p>
+<a href="{{ asset('img/uml.png') }}">
+    <img src="{{ asset('img/uml.png') }}" alt="UML">
+</a>
 <div class="profile-container">
     <ul>
         <li><a href="{{ path('card_deck') }}">Show deck</a></li>, 
