@@ -150,8 +150,8 @@ class BlackJackController extends AbstractController
             $session->set("hand2", $hand2);
             $session->set("player_points_2", $playerPoints2);
 
-            if ($playerPoints2 >= 21) {
-                return $this->redirectToRoute("stand");
+            if ($playerPoints2 >= 20) {
+                return $this->redirectToRoute("stand_split");
             }
         }
 
@@ -164,7 +164,8 @@ class BlackJackController extends AbstractController
             "hand2" => $hand2,
             "totplayer1" => $session->get("player_points_1", 0),
             "totplayer2" => $session->get("player_points_2", 0),
-            "splittat" => true
+            "splittat" => true,
+            "split" => false
         ]);
     }
 
@@ -212,7 +213,7 @@ class BlackJackController extends AbstractController
         if ($activeHand === "hand1") {
             $session->set("active_hand", "hand2");
 
-            return $this->redirectToRoute("add_card");
+            return $this->redirectToRoute("add_card_split");
         }
 
         $cards = $session->get("shuffled_deck", []);
@@ -234,7 +235,7 @@ class BlackJackController extends AbstractController
         $session->set("dealer_cards", $dealerCards);
         $session->set("dealer_points", $dealerPoints);
 
-        return $this->render("black_jack/winner.html.twig", [
+        return $this->render("black_jack/winner_split.html.twig", [
             "dealer" => $dealerCards,
             "dealerPoints" => $dealerPoints,
             "hand1" => $session->get("hand1", []),
@@ -273,6 +274,7 @@ class BlackJackController extends AbstractController
         $session->set("player_points_2", $hand2points);
         $session->set("active_hand", "hand1");
         $session->set("shuffled_deck", $cards);
+        $session->remove("active_hand");
 
         return $this->render("black_jack/game_start.html.twig", [
             "dealer" => $session->get("dealer_cards", []),

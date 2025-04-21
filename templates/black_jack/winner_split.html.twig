@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Game Over{% endblock %}
+
+{% block body %}
+<h1>Game Over</h1>
+
+<h2>Dealer</h2>
+<p>Points: {{ dealerPoints }}</p>
+<ul>
+    {% for card in dealer %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+
+
+<h2>Hand 1</h2>
+<h3>{{ winner1 }}</h3>
+<p>Points: {{ totplayer1 }}</p>
+<ul>
+    {% for card in hand1 %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Hand 2</h2>
+<h3>{{ winner2 }}</h3>
+<p>Points: {{ totplayer2 }}</p>
+<ul>
+    {% for card in hand2 %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+
+<a href="{{ path('game_start') }}">
+    <button>Spela igen</button>
+</a>
+{% endblock %}
