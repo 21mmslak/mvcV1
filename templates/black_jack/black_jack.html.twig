@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Black Jack{% endblock %}
+
+{% block body %}
+<h1>Black Jack</h1>
+
+<p>
+    <a href="https://en.wikipedia.org/wiki/Blackjack">Regler</a>
+    <a href="{{ path('doc') }}">Dokumentation</a>
+
+    <form action="{{ path('game_start') }}" method="get">
+        <button type="submit">Starta spelet</button>
+    </form>
+</p>
+
+{% endblock %}
