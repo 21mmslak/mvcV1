@@ -1,0 +1,53 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Black Jack{% endblock %}
+
+{% block body %}
+<h1>Black Jack</h1>
+<h2>Dealer</h2>
+
+<ul>
+    {% for card in dealer %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+<p>Tot: {{ dealerPoints }}</p>
+
+
+{% set active = active is defined ? active : app.session.get('active_hand') %}
+
+<h2>Player Hand 1</h2>
+<ul>
+    {% for card in hand1 %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+<p>Tot: {{ totplayer1 }}</p>
+
+<h2>Player Hand 2</h2>
+<ul>
+    {% for card in hand2 %}
+        <li>{{ card.card }}</li>
+    {% endfor %}
+</ul>
+<p>Tot: {{ totplayer2 }}</p>
+
+<p>Coins: {{ coins }}</p>
+
+{% if active == 'hand1' and totplayer1 < 21 %}
+    <form action="{{ path('add_card_split') }}" method="post">
+        <button type="submit">Hit (Hand 1)</button>
+    </form>
+    <form action="{{ path('stand_split') }}" method="post">
+        <button type="submit">Stand (Hand 1)</button>
+    </form>
+{% elseif active == 'hand2' and totplayer2 < 21 %}
+    <form action="{{ path('add_card_split') }}" method="post">
+        <button type="submit">Hit (Hand 2)</button>
+    </form>
+    <form action="{{ path('stand_split') }}" method="post">
+        <button type="submit">Stand (Hand 2)</button>
+    </form>
+{% endif %}
+
+{% endblock %}

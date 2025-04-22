@@ -33,6 +33,9 @@ class BlackJackController extends AbstractController
     {
         $blackJack = new BlackJack();
         $cards = $blackJack->startGame($session);
+        if (!$session->has('coins')) {
+            $session->set('coins', 100);
+        }
 
         $playerStart = array_splice($cards, 0, 2);
         $dealerStart = array_splice($cards, 0, 2);
@@ -48,14 +51,15 @@ class BlackJackController extends AbstractController
 
         $over = $this->rules->checkOver($playerPoints);
         if ($over) {
-            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints);
+            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
 
             return $this->render("black_jack/winner.html.twig", [
                 "winner" => $winner,
                 "dealer" => $session->get("dealer_cards", []),
                 "player" => $session->get("player_cards", []),
                 "dealerPoints" => $session->get("dealer_points", []),
-                "playerPoints" => $session->get("player_points", [])
+                "playerPoints" => $session->get("player_points", []),
+                "coins" => $session->get("coins", 100)
             ]);
         }
 
@@ -71,7 +75,8 @@ class BlackJackController extends AbstractController
             "dealerPoints" => $dealerPoints,
             "playerPoints" => $playerPoints,
             "split" => $split,
-            "splittat" => false
+            "splittat" => false,
+            "coins" => $session->get("coins", 100)
         ]);
     }
 
@@ -99,14 +104,15 @@ class BlackJackController extends AbstractController
 
         $over = $this->rules->checkOver($playerPoints);
         if ($over) {
-            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints);
+            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
 
             return $this->render("black_jack/winner.html.twig", [
                 "winner" => $winner,
                 "dealer" => $session->get("dealer_cards", []),
                 "player" => $session->get("player_cards", []),
                 "dealerPoints" => $session->get("dealer_points", []),
-                "playerPoints" => $session->get("player_points", [])
+                "playerPoints" => $session->get("player_points", []),
+                "coins" => $session->get("coins", 100)
             ]);
         }
 
@@ -114,7 +120,9 @@ class BlackJackController extends AbstractController
             "player" => $playerCards,
             "dealer" => $dealerCards,
             "dealerPoints" => $dealerPoints,
-            "playerPoints" => $playerPoints
+            "playerPoints" => $playerPoints,
+            "coins" => $session->get("coins", 100),
+            "split" => $session->get("is_split")
         ]);
     }
 
@@ -157,7 +165,7 @@ class BlackJackController extends AbstractController
 
         $session->set("shuffled_deck", $cards);
 
-        return $this->render("black_jack/game_start.html.twig", [
+        return $this->render("black_jack/game_split.html.twig", [
             "dealer" => $dealerCards,
             "dealerPoints" => $dealerPoints,
             "hand1" => $hand1,
@@ -165,7 +173,8 @@ class BlackJackController extends AbstractController
             "totplayer1" => $session->get("player_points_1", 0),
             "totplayer2" => $session->get("player_points_2", 0),
             "splittat" => true,
-            "split" => false
+            "split" => false,
+            "coins" => $session->get("coins", 100)
         ]);
     }
 
@@ -191,14 +200,15 @@ class BlackJackController extends AbstractController
         $session->set("dealer_points", $dealerPoints);
         $session->set("shuffled_deck", $cards);
 
-        $winner = $this->rules->decideWinner($dealerPoints, $playerPoints);
+        $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
 
         return $this->render("black_jack/winner.html.twig", [
             "winner" => $winner,
             "dealer" => $dealerCards,
             "player" => $session->get("player_cards", []),
             "dealerPoints" => $dealerPoints,
-            "playerPoints" => $playerPoints
+            "playerPoints" => $playerPoints,
+            "coins" => $session->get("coins", 100)
         ]);
     }
 
@@ -228,8 +238,8 @@ class BlackJackController extends AbstractController
             $dealerPoints = $this->rules->countPoints($dealerCards);
         }
 
-        $winner1 = $this->rules->decideWinner($dealerPoints, $player1Points);
-        $winner2 = $this->rules->decideWinner($dealerPoints, $player2Points);
+        $winner1 = $this->rules->decideWinner($dealerPoints, $player1Points, $session);
+        $winner2 = $this->rules->decideWinner($dealerPoints, $player2Points, $session);
 
         $session->set("shuffled_deck", $cards);
         $session->set("dealer_cards", $dealerCards);
@@ -244,7 +254,8 @@ class BlackJackController extends AbstractController
             "totplayer2" => $player2Points,
             "winner1" => $winner1,
             "winner2" => $winner2,
-            "splittat" => true
+            "splittat" => true,
+            "coins" => $session->get("coins", 100)
         ]);
     }
 
@@ -276,7 +287,7 @@ class BlackJackController extends AbstractController
         $session->set("shuffled_deck", $cards);
         $session->remove("active_hand");
 
-        return $this->render("black_jack/game_start.html.twig", [
+        return $this->render("black_jack/game_split.html.twig", [
             "dealer" => $session->get("dealer_cards", []),
             "dealerPoints" => $session->get("dealer_points", []),
             "hand1" => $hand1,
@@ -285,7 +296,8 @@ class BlackJackController extends AbstractController
             "split" => false,
             "totplayer1" => $hand1points,
             "totplayer2" => $hand2points,
-            "active" => "hand1"
+            "active" => "hand1",
+            "coins" => $session->get("coins", 100)
         ]);
     }
 

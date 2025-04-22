@@ -39,16 +39,22 @@ class BlackJackRules
         return $points;
     }
 
-    public function decideWinner(int $dealer, int $player): string
+    public function decideWinner(int $dealer, int $player, SessionInterface $session): string
     {
+        $coins = $session->get("coins", 100);
+
         if ($player > 21) {
+            $coins -= 10;
+            $session->set("coins", $coins);
             return "Dealer Win! Player lose :(";
-        } else if ($dealer > 21) {
+        } elseif ($dealer > 21 || $player > $dealer) {
+            $coins += 10;
+            $session->set("coins", $coins);
             return "Player Win! Dealer lose :)";
-        } else if ($player < $dealer) {
+        } elseif ($dealer > $player) {
+            $coins -= 10;
+            $session->set("coins", $coins);
             return "Dealer Win! Player lose :(";
-        } else if ($dealer < $player) {
-            return "Player Win! Dealer lose :)";
         } else {
             return "Draw! Nobody wins.";
         }
