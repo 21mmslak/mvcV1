@@ -5,6 +5,8 @@
 {% block body %}
 <h1>Session info</h1>
 
+<a href="{{ path('session_delete') }}">Ta sönder sessionen</a>
+
 {{ include('flash.html.twig') }}
 
 {% if session is empty %}

@@ -21,6 +21,7 @@
         <form action="{{ path('draw_n_cards_x_players_api', { play: 1, num: 1 }) }}" method="POST">
             <button type="submit">Deal N(1 std) cards X(1 std) player</button>
         </form>
+        <li><a href="{{ path('game_api') }}">Show blackjack status</a></li>
     </ul>
 </div>
 {% endblock %}

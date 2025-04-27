@@ -8,7 +8,7 @@
 
 <ul>
     {% for card in dealer %}
-        <li>{{ card.card }}</li>
+        <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
 <p>Tot: {{ dealerPoints }}</p>
@@ -19,7 +19,7 @@
 <h2>Player Hand 1</h2>
 <ul>
     {% for card in hand1 %}
-        <li>{{ card.card }}</li>
+        <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
 <p>Tot: {{ totplayer1 }}</p>
@@ -27,7 +27,7 @@
 <h2>Player Hand 2</h2>
 <ul>
     {% for card in hand2 %}
-        <li>{{ card.card }}</li>
+        <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
 <p>Tot: {{ totplayer2 }}</p>

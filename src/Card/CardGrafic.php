@@ -21,6 +21,8 @@ class CardGrafic extends Card
     public function getAsString(): string
     {
         $symbol = $this->symbols[$this->suit] ?? '?';
-        return "{$this->value}{$symbol}";
+        $colorClass = ($this->suit === 'Hearts' || $this->suit === 'Diamonds') ? 'red-card' : 'black-card';
+
+        return sprintf('<span class="%s">%s%s</span>', $colorClass, $this->value, $symbol);
     }
 }

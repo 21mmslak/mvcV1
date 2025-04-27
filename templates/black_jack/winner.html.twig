@@ -11,7 +11,7 @@
 <p>Points: {{ dealerPoints }}</p>
 <ul>
     {% for card in dealer %}
-        <li>{{ card.card }}</li>
+        <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
 
@@ -20,7 +20,7 @@
 <p>Points: {{ playerPoints }}</p>
 <ul>
     {% for card in player %}
-        <li>{{ card.card }}</li>
+        <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
 

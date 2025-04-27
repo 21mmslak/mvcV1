@@ -11,6 +11,14 @@ body {
     color: blue;
 }
 
+.red-card {
+    color: red;
+}
+
+.black-card {
+    color: black;
+}
+
 .profile-container {
     display: flex;
     padding-left: 10px;

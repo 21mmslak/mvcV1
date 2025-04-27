@@ -109,4 +109,23 @@ class ApiController extends AbstractController
             "cards_left" => count($shuffledDeck),
         ]);
     }
+
+    #[Route("api/game", name: "game_api")]
+    public function gameApi(
+        SessionInterface $session
+    ): Response {
+        $coins = $session->get("coins", []);
+        $player_cards = $session->get("player_cards", []);
+        $dealer_cards = $session->get("dealer_cards", []);
+        $player_points = $session->get("player_points", []);
+        $dealer_points = $session->get("dealer_points", []);
+
+        return new JsonResponse([
+            "coins" => $coins,
+            "player cards" => $player_cards,
+            "dealer cards" => $dealer_cards,
+            "player points" => $player_points,
+            "dealer points" => $dealer_points,
+        ]);
+    }
 }

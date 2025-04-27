@@ -15,8 +15,7 @@ class BlackJack
 {
     public function startGame(
         SessionInterface $session
-    ): array
-    {
+    ): array {
         $deck = new DeckOfCards();
         $deck->shuffle();
 

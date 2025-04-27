@@ -28,6 +28,12 @@ class BlackJackController extends AbstractController
         return $this->render('black_jack/doc.html.twig');
     }
 
+    #[Route('/roule', name: 'roule')]
+    public function roule(): Response
+    {
+        return $this->render('black_jack/roule.html.twig');
+    }
+    
     #[Route('/game_start', name: 'game_start')]
     public function game_start(SessionInterface $session): Response
     {
@@ -42,7 +48,7 @@ class BlackJackController extends AbstractController
 
         $playerPoints = $this->rules->countPoints($playerStart);
         $dealerPoints = $this->rules->countPoints($dealerStart);
-        
+
         $session->set("player_cards", $playerStart);
         $session->set("dealer_cards", $dealerStart);
         $session->set("shuffled_deck", $cards);
@@ -184,7 +190,7 @@ class BlackJackController extends AbstractController
 
     #[Route('/stand', name: 'stand')]
     public function stand(SessionInterface $session): Response
-    {   
+    {
         $cards = $session->get("shuffled_deck", []);
         $dealerCards = $session->get("dealer_cards", []);
         $playerPoints = $session->get("player_points", []);

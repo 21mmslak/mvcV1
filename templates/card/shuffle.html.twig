@@ -8,7 +8,7 @@
 <div class="deck">
     {% for card in cards %}
         <div class="card">
-            {{ card.getAsString() }}
+            {{ card.getAsString()|raw }}
         </div>
     {% endfor %}
 </div>
