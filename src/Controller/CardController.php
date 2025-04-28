@@ -42,7 +42,7 @@ class CardController extends AbstractController
             'notice',
             'Session is now cleard!'
         );
-        return $this->redirect('/session');
+        return $this->redirectToRoute('session');
     }
 
     #[Route("/game/card/deck", name: "card_deck")]
