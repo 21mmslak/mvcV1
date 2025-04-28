@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use RuntimeException;
 
 class LuckyControllerJson extends AbstractController
 {
@@ -53,6 +54,10 @@ class LuckyControllerJson extends AbstractController
         ];
 
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        if ($json === false) {
+            throw new RuntimeException('JSON encoding failed: ' . json_last_error_msg());
+        }
 
         return new Response($json, 200, ['Content-Type' => 'application/json']);
     }

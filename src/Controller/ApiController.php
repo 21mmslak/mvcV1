@@ -9,9 +9,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use LogicException;
+use Exception;
 
 class ApiController extends AbstractController
 {
+    /**
+     * Assert that a value is an array.
+     * @return array<int|string, mixed>
+     */
+    private function assertArray(mixed $value, string $name): array
+    {
+        if (!is_array($value)) {
+            throw new LogicException("Expected array for {$name} in session, got something else.");
+        }
+        return $value;
+    }
+
     #[Route("/api/deck", name: "apiDeck", methods: ["GET"])]
     public function apiDeck(): Response
     {
@@ -52,7 +66,7 @@ class ApiController extends AbstractController
     public function drawCardApi(
         SessionInterface $session
     ): Response {
-        $shuffledDeck = $session->get("shuffled_deck", []);
+        $shuffledDeck = $this->assertArray($session->get("shuffled_deck", []), "shuffled_deck");
 
         $drawnCards = array_splice($shuffledDeck, 0, 1);
         $session->set("shuffled_deck", $shuffledDeck);
@@ -67,11 +81,11 @@ class ApiController extends AbstractController
         int $num,
         SessionInterface $session
     ): Response {
-        $shuffledDeck = $session->get("shuffled_deck", []);
+        $shuffledDeck = $this->assertArray($session->get("shuffled_deck", []), "shuffled_deck");
         $totalCards = count($shuffledDeck);
 
         if ($num > $totalCards) {
-            throw new \Exception("Cannot draw more cards than are left in the deck!");
+            throw new Exception("Cannot draw more cards than are left in the deck!");
         }
 
         $drawnCards = array_splice($shuffledDeck, 0, $num);
@@ -89,11 +103,11 @@ class ApiController extends AbstractController
         int $play,
         SessionInterface $session
     ): Response {
-        $shuffledDeck = $session->get("shuffled_deck", []);
+        $shuffledDeck = $this->assertArray($session->get("shuffled_deck", []), "shuffled_deck");
         $totalCards = count($shuffledDeck);
 
         if ($num * $play > $totalCards) {
-            throw new \Exception("Cannot draw more cards than are left in the deck!");
+            throw new Exception("Cannot draw more cards than are left in the deck!");
         }
 
         $playerHand = [];
@@ -115,17 +129,17 @@ class ApiController extends AbstractController
         SessionInterface $session
     ): Response {
         $coins = $session->get("coins", []);
-        $player_cards = $session->get("player_cards", []);
-        $dealer_cards = $session->get("dealer_cards", []);
-        $player_points = $session->get("player_points", []);
-        $dealer_points = $session->get("dealer_points", []);
+        $playerCards = $session->get("player_cards", []);
+        $dealerCards = $session->get("dealer_cards", []);
+        $playerPoints = $session->get("player_points", []);
+        $dealerPoints = $session->get("dealer_points", []);
 
         return new JsonResponse([
             "coins" => $coins,
-            "player cards" => $player_cards,
-            "dealer cards" => $dealer_cards,
-            "player points" => $player_points,
-            "dealer points" => $dealer_points,
+            "player cards" => $playerCards,
+            "dealer cards" => $dealerCards,
+            "player points" => $playerPoints,
+            "dealer points" => $dealerPoints,
         ]);
     }
 }

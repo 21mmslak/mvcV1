@@ -13,6 +13,17 @@ use App\Controller\CardController;
 
 class BlackJackRules
 {
+    private function getIntFromSession(SessionInterface $session, string $key): int
+    {
+        $value = $session->get($key);
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return 0;
+    }
+
     public function countPoints(array $hand): int
     {
         $points = 0;
@@ -26,9 +37,8 @@ class BlackJackRules
             } elseif ($value === 'A') {
                 $aces++;
                 $points += 11;
-            } else {
-                $points += intval($value);
             }
+            $points += intval($value);
         }
 
         while ($points > 21 && $aces > 0) {
@@ -41,7 +51,7 @@ class BlackJackRules
 
     public function decideWinner(int $dealer, int $player, SessionInterface $session): string
     {
-        $coins = $session->get("coins", 100);
+        $coins = $this->getIntFromSession($session, "coins");
 
         if ($player > 21) {
             $coins -= 10;
@@ -55,9 +65,8 @@ class BlackJackRules
             $coins -= 10;
             $session->set("coins", $coins);
             return "Dealer Win! Player lose :(";
-        } else {
-            return "Draw! Nobody wins.";
         }
+        return "Draw! Nobody wins.";
     }
 
     public function checkOver(int $points): bool

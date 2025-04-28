@@ -12,6 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Controller\CardController;
+use function PHPUnit\Framework\throwException;
+use LogicException;
 
 class BlackJackController extends AbstractController
 {
@@ -20,6 +22,25 @@ class BlackJackController extends AbstractController
     public function __construct()
     {
         $this->rules = new BlackJackRules();
+    }
+    /**
+     * Assert that a value is an array.
+     * @return array<int|string, mixed>
+     */
+    private function assertArray(mixed $value, string $name): array
+    {
+        if (!is_array($value)) {
+            throw new LogicException("Expected array for {$name} in session, got something else.");
+        }
+        return $value;
+    }
+
+    private function assertInt(mixed $value, string $name): int
+    {
+        if (!is_int($value)) {
+            throw new LogicException("Expected int for {$name} in session, got something else.");
+        }
+        return $value;
     }
 
     #[Route('/doc', name: 'doc')]
@@ -35,7 +56,7 @@ class BlackJackController extends AbstractController
     }
     
     #[Route('/game_start', name: 'game_start')]
-    public function game_start(SessionInterface $session): Response
+    public function gameStart(SessionInterface $session): Response
     {
         $blackJack = new BlackJack();
         $cards = $blackJack->startGame($session);
@@ -71,7 +92,7 @@ class BlackJackController extends AbstractController
 
         $split = false;
         $session->set("is_split", false);
-        if ($playerStart[0]['card'][0] === $playerStart[1]['card'][0]) {
+        if ($playerStart[0]['value'] === $playerStart[1]['value']) {
             $split = true;
         }
 
@@ -87,16 +108,16 @@ class BlackJackController extends AbstractController
     }
 
     #[Route('/add_card', name: 'add_card')]
-    public function add_card(SessionInterface $session): Response
+    public function addCard(SessionInterface $session): Response
     {
-        $cards = $session->get("shuffled_deck", []);
+        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
 
         $newCard = array_shift($cards);
 
-        $playerCards = $session->get("player_cards", []);
-        $dealerCards = $session->get("dealer_cards", []);
-        $dealerPoints = $session->get("dealer_points", []);
-        $playerPoints = $session->get("player_points", []);
+        $playerCards = $this->assertArray($session->get("player_cards"), "player_cards");
+        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
+        $dealerPoints = $this->assertInt($session->get("dealer_points"), "dealer_points");
+        $playerPoints = $this->assertInt($session->get("player_points"), "player_points");
 
         if ($playerPoints < 21) {
             $playerCards[] = $newCard;
@@ -136,17 +157,17 @@ class BlackJackController extends AbstractController
 
 
     #[Route('/add_card_split', name: 'add_card_split')]
-    public function add_card_split(SessionInterface $session): Response
+    public function addCardSplit(SessionInterface $session): Response
     {
-        $cards = $session->get("shuffled_deck", []);
+        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
         $activeHand = $session->get("active_hand", "hand1");
 
         $newCard = array_shift($cards);
 
-        $hand1 = $session->get("hand1", []);
-        $hand2 = $session->get("hand2", []);
-        $dealerCards = $session->get("dealer_cards", []);
-        $dealerPoints = $session->get("dealer_points", []);
+        $hand1 = $this->assertArray($session->get("hand1"), "hand1");
+        $hand2 = $this->assertArray($session->get("hand2"), "hand2");
+        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
+        $dealerPoints = $this->assertInt($session->get("dealer_points"), "dealer_points");
 
         if ($activeHand === "hand1") {
             $hand1[] = $newCard;
@@ -191,9 +212,9 @@ class BlackJackController extends AbstractController
     #[Route('/stand', name: 'stand')]
     public function stand(SessionInterface $session): Response
     {
-        $cards = $session->get("shuffled_deck", []);
-        $dealerCards = $session->get("dealer_cards", []);
-        $playerPoints = $session->get("player_points", []);
+        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
+        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
+        $playerPoints = $this->assertInt($session->get("player_points"), "player_points");
 
         $dealerPoints = $this->rules->countPoints($dealerCards);
         while ($dealerPoints < 16) {
@@ -222,20 +243,31 @@ class BlackJackController extends AbstractController
 
 
     #[Route('/stand_split', name: 'stand_split')]
-    public function stand_split(SessionInterface $session): Response
+    public function standSplit(SessionInterface $session): Response
     {
         $activeHand = $session->get("active_hand", "hand1");
 
         if ($activeHand === "hand1") {
             $session->set("active_hand", "hand2");
 
-            return $this->redirectToRoute("add_card_split");
+            return $this->render("black_jack/game_split.html.twig", [
+                "dealer" => $session->get("dealer_cards", []),
+                "dealerPoints" => $session->get("dealer_points", []),
+                "hand1" => $session->get("hand1", []),
+                "hand2" => $session->get("hand2", []),
+                "totplayer1" => $session->get("player_points_1", 0),
+                "totplayer2" => $session->get("player_points_2", 0),
+                "splittat" => true,
+                "split" => false,
+                "coins" => $session->get("coins", 100),
+                "active" => "hand2"
+            ]);
         }
 
-        $cards = $session->get("shuffled_deck", []);
-        $dealerCards = $session->get("dealer_cards", []);
-        $player1Points = $session->get("player_points_1", 0);
-        $player2Points = $session->get("player_points_2", 0);
+        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
+        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
+        $player1Points = $this->assertInt($session->get("player_points_1"), "player_points_1");
+        $player2Points = $this->assertInt($session->get("player_points_2"), "player_points_2");
 
         $dealerPoints = $this->rules->countPoints($dealerCards);
         while ($dealerPoints < 16) {
@@ -273,9 +305,9 @@ class BlackJackController extends AbstractController
     {
         $session->set("is_split", true);
 
-        $cards = $session->get("shuffled_deck", []);
-        $playerCards = $session->get("player_cards", []);
-
+        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
+        $playerCards = $this->assertArray($session->get("player_cards"), "player_cards");
+        
         $hand1 = [$playerCards[0]];
         $hand2 = [$playerCards[1]];
 
@@ -291,7 +323,7 @@ class BlackJackController extends AbstractController
         $session->set("player_points_2", $hand2points);
         $session->set("active_hand", "hand1");
         $session->set("shuffled_deck", $cards);
-        $session->remove("active_hand");
+        $session->set("active_hand", "hand1");
 
         return $this->render("black_jack/game_split.html.twig", [
             "dealer" => $session->get("dealer_cards", []),
@@ -306,5 +338,4 @@ class BlackJackController extends AbstractController
             "coins" => $session->get("coins", 100)
         ]);
     }
-
 }

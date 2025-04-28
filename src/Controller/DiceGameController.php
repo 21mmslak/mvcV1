@@ -10,9 +10,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use LogicException;
+use Exception;
 
 class DiceGameController extends AbstractController
 {
+    private function getIntFromSession(SessionInterface $session, string $key): int
+    {
+        $value = $session->get($key);
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return 0;
+    }
+
     #[Route("/game/pig", name: "pig_start")]
     public function home(): Response
     {
@@ -36,7 +49,7 @@ class DiceGameController extends AbstractController
     public function testRollDices(int $num): Response
     {
         if ($num > 99) {
-            throw new \Exception("Can not roll more than 99 dices!");
+            throw new Exception("Can not roll more than 99 dices!");
         }
 
         $diceRoll = [];
@@ -59,16 +72,13 @@ class DiceGameController extends AbstractController
     public function testDiceHand(int $num): Response
     {
         if ($num > 99) {
-            throw new \Exception("Can not roll more than 99 dices!");
+            throw new Exception("Can not roll more than 99 dices!");
         }
 
         $hand = new DiceHand();
         for ($i = 1; $i <= $num; $i++) {
-            if ($i % 2 === 1) {
-                $hand->add(new DiceGraphic());
-            } else {
-                $hand->add(new Dice());
-            }
+            $die = ($i % 2 === 1) ? new DiceGraphic() : new Dice();
+            $hand->add($die);
         }
 
         $hand->roll();
@@ -122,10 +132,14 @@ class DiceGameController extends AbstractController
     ): Response {
         $dicehand = $session->get("pig_dicehand");
 
+        if (!$dicehand instanceof DiceHand) {
+            throw new LogicException('DiceHand not found in session.');
+        }
+
         $data = [
             "pigDices" => $session->get("pig_dices"),
-            "pigRound" => $session->get("pig_round"),
-            "pigTotal" => $session->get("pig_total"),
+            "pigRound" => $this->getIntFromSession($session, "pig_round"),
+            "pigTotal" => $this->getIntFromSession($session, "pig_total"),
             "diceValues" => $dicehand->getString()
         ];
 
@@ -145,9 +159,12 @@ class DiceGameController extends AbstractController
         SessionInterface $session
     ): Response {
         $hand = $session->get("pig_dicehand");
+        if (!$hand instanceof DiceHand) {
+            throw new LogicException('DiceHand not found in session.');
+        }
         $hand->roll();
 
-        $roundTotal = $session->get("pig_round");
+        $roundTotal = $this->getIntFromSession($session, "pig_round");
         $round = 0;
         $values = $hand->getValues();
         foreach ($values as $value) {
@@ -172,8 +189,8 @@ class DiceGameController extends AbstractController
     public function save(
         SessionInterface $session
     ): Response {
-        $roundTotal = $session->get("pig_round");
-        $gameTotal = $session->get("pig_total");
+        $roundTotal = $this->getIntFromSession($session, "pig_round");
+        $gameTotal = $this->getIntFromSession($session, "pig_total");
 
         $session->set("pig_round", 0);
         $session->set("pig_total", $roundTotal + $gameTotal);

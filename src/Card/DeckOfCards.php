@@ -7,6 +7,10 @@ use App\Card\CardGrafic;
 
 class DeckOfCards
 {
+    /**
+     * Summary of deck
+     * @var CardGrafic[] $deck
+     */
     private array $deck = [];
 
     public function __construct()
@@ -41,6 +45,10 @@ class DeckOfCards
         return count($this->deck);
     }
 
+    /**
+     * Summary of getDeck
+     * @return CardGrafic[]
+     */
     public function getDeck(): array
     {
         return $this->deck;

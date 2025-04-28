@@ -13,6 +13,12 @@ use App\Controller\CardController;
 
 class BlackJack
 {
+    /**
+     * Startar spelet och lägger blandad kortlek i sessionen.
+     *
+     * @param SessionInterface $session
+     * @return array<int, array{card: string, value: string, suit: string}>
+     */
     public function startGame(
         SessionInterface $session
     ): array {

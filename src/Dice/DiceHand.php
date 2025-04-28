@@ -6,6 +6,9 @@ use App\Dice\Dice;
 
 class DiceHand
 {
+    /**
+     * @var Dice[] Array of Die objects
+     */
     private $hand = [];
 
     public function add(Dice $die): void
@@ -25,6 +28,10 @@ class DiceHand
         return count($this->hand);
     }
 
+    /**
+     * Summary of getValues
+     * @return int[]
+     */
     public function getValues(): array
     {
         $values = [];
@@ -34,6 +41,10 @@ class DiceHand
         return $values;
     }
 
+    /**
+     * Array of die values as strings
+     * @return string[]
+     */
     public function getString(): array
     {
         $values = [];

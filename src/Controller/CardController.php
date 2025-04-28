@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Exception;
+use LogicException;
 
 class CardController extends AbstractController
 {
     #[Route("/card", name: "card_start")]
     public function home(
-        Request $request,
-        SessionInterface $session
     ): Response {
         // $session->set("card_message", "Välkommen till kortspelet!");
 
@@ -85,6 +85,10 @@ class CardController extends AbstractController
     ): Response {
         $shuffledDeck = $session->get("shuffled_deck", []);
 
+        if (!is_array($shuffledDeck)) {
+            throw new LogicException('No valid deck found in session');
+        }
+
         $drawnCards = array_splice($shuffledDeck, 0, 1);
         $session->set("shuffled_deck", $shuffledDeck);
 
@@ -100,10 +104,13 @@ class CardController extends AbstractController
         SessionInterface $session
     ): Response {
         $shuffledDeck = $session->get("shuffled_deck", []);
+        if (!is_array($shuffledDeck)) {
+            throw new LogicException('No valid deck found in session');
+        }
         $totalCards = count($shuffledDeck);
 
         if ($num > $totalCards) {
-            throw new \Exception("Cannot draw more cards than are left in the deck!");
+            throw new Exception("Cannot draw more cards than are left in the deck!");
         }
 
         $drawnCards = array_splice($shuffledDeck, 0, $num);
@@ -122,10 +129,14 @@ class CardController extends AbstractController
         SessionInterface $session
     ): Response {
         $shuffledDeck = $session->get("shuffled_deck", []);
+
+        if (!is_array($shuffledDeck)) {
+            throw new LogicException('No valid deck found in session');
+        }
         $totalCards = count($shuffledDeck);
 
         if ($num * $play > $totalCards) {
-            throw new \Exception("Cannot draw more cards than are left in the deck!");
+            throw new Exception("Cannot draw more cards than are left in the deck!");
         }
 
         $playerHand = [];

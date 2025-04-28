@@ -2,13 +2,19 @@
 
 namespace App\Dice;
 
+use LogicException;
+
 class Dice
 {
-    protected $value;
+    /**
+     * Value of the dice
+     * @var int|null
+     */
+    protected ?int $value = null;
 
     public function __construct()
     {
-        $this->value = null;
+        // $this->value = null;
     }
 
     public function roll(): int
@@ -19,6 +25,9 @@ class Dice
 
     public function getValue(): int
     {
+        if ($this->value === null) {
+            throw new LogicException('Tärningen är inte rullad');
+        }
         return $this->value;
     }
 
