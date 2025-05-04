@@ -13,7 +13,7 @@ use App\Controller\CardController;
 
 class BlackJackRules
 {
-    private function getIntFromSession(SessionInterface $session, string $key): int
+    protected function getIntFromSession(SessionInterface $session, string $key): int
     {
         $value = $session->get($key);
 
