@@ -12,12 +12,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Controller\CardController;
-use function PHPUnit\Framework\throwException;
 use LogicException;
+
+use function PHPUnit\Framework\throwException;
 
 class BlackJackController extends AbstractController
 {
-    private BlackJackRules $rules;
+    protected BlackJackRules $rules;
 
     public function __construct()
     {
@@ -54,7 +55,7 @@ class BlackJackController extends AbstractController
     {
         return $this->render('black_jack/roule.html.twig');
     }
-    
+
     #[Route('/game_start', name: 'game_start')]
     public function gameStart(SessionInterface $session): Response
     {
@@ -307,7 +308,7 @@ class BlackJackController extends AbstractController
 
         $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
         $playerCards = $this->assertArray($session->get("player_cards"), "player_cards");
-        
+
         $hand1 = [$playerCards[0]];
         $hand2 = [$playerCards[1]];
 
