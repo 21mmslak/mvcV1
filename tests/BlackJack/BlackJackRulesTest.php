@@ -51,8 +51,9 @@ class BlackJackRulesTest extends TestCase
     {
         $session = new Session(new MockArraySessionStorage());
         $session->set('test_key', 'non-numeric');
+
         $obj = new class () extends BlackJackRules {
-            public function publicGetIntFromSession($session, $key)
+            public function publicGetIntFromSession(Session $session, string $key): int
             {
                 return $this->getIntFromSession($session, $key);
             }
