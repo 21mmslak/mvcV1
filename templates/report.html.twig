@@ -47,7 +47,7 @@
        känns bra så här långt skulle jag säga, ibland är det saker man inte förstår men tycker att det är lätt att söka sig till en lösning. Min TIL för detta kmom är väl alla 
        lintar men annars att jag blir mer och mer säker på objectorientering och ramverk symfony. :)
     </p>
-    <h2 id="kmom03">Kmom03</h2>
+    <h2 id="kmom04">Kmom04</h2>
     <p>
         Jag jobbar som testar till viss del men mest att testa funktioner så de beter sig korrekt enligt kraven, inte att jag testar koden. Men tanken är att jag ska röra mig 
         mer ditåt vilket gjorde att jag valde att nörda ner mig en del i testningen. Men vi har också skrivit tester i python så det var inte super svårt mer än att veta hur 
@@ -58,6 +58,19 @@
         Jag valde detta kmom att lägga mer krut på själva testningen än att få alla lintar gröna (nu klagar den på controller testerna bara, vilket kanske är ok då man inte skulle 
         skriva tester till de). Mitt TIL för detta kmom är allt med PHPUnit och PHPUnit i syfony. :)
     </p>
-
+    <h2 id="kmom05">Kmom05</h2>
+    <p>
+        Att jobba igenom övningen med Symfony och Doctrine gick bra jag känner väl där att jag behöver köra igenom Doctrine lite mer så det verkligen sitter 
+        jag skulle säga att jag har koll på det men behöver söka upp lite saker mellan verven. Jag tänkte på följande sätt när jag skapade min applikation 
+        att när man går till bibloteket så ser man alla böcker och dess info, vill man skapa en bok kan man gå ner på sidan där kan man även "nollsätlla" 
+        bibloteket till sin start. Man kan sedan klicka på en bok för att där få upp vyn med bara den boken, där kan du uppdatera information om boken om man 
+        vill det och du kan även ta bort boken från bibloteket. Det är så jag kännde att det var mest logiskt. Vi har jobbat mycket med CRUD tidigare så det 
+        känner jag mig bekväm med. Jag skulle ändå säga att det finns likheter här och i tex databas kursen som gjorde det lätt att tänka hur koden ska funekra. 
+        Jag upplever att ORM underlättar arbetet genom att integrera databasen direkt med objekt i applikationskoden, vilket gör att man slipper skriva rå SQL 
+        vid varje databasoperation. Samtidigt tycker jag att det var enklare och mer överskådligt att arbeta med stored procedures och CALL-kommandon som vi 
+        gjorde i databaskursen. Då låg affärslogiken tydligt på databasnivå, vilket gjorde transaktionerna blev lättare att följa, särskilt när 
+        det gällde komplexa operationer. Med ORM upplever jag att det ibland blir mer dolt vad som händer under ytan, vilket kan göra felsökning och förståelse 
+        lite svårare. Min TIL för detta kmom var mycekt med Doctrine. Tack för en bra vecka :)
+    </p>
 </div>
 {% endblock %}
