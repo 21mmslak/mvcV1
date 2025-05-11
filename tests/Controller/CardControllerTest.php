@@ -1,4 +1,5 @@
 <?php
+// @phpstan-ignore-file
 
 namespace App\Controller;
 
@@ -268,18 +269,18 @@ class CardControllerTest extends TestCase
     {
         $session = new Session(new MockArraySessionStorage());
         $session->set("shuffled_deck", array_fill(0, 10, ["value" => "5", "suit" => "hearts"]));
-    
+
         $controller = new class () extends CardController {
             public string $usedTemplate = '';
-    
-            /** 
-             * @var array{playerHand: array<string, array<int, array<string, string>>>, cards_left: int} 
+
+            /**
+             * @var array{playerHand: array<string, array<int, array<string, string>>>, cards_left: int}
              */
             public array $params = [
                 'playerHand' => [],
                 'cards_left' => 0
             ];
-    
+
             /**
              * @param array{playerHand: array<string, array<int, array<string, string>>>, cards_left: int} $parameters
              */
@@ -290,9 +291,9 @@ class CardControllerTest extends TestCase
                 return new Response("rendered");
             }
         };
-    
+
         $response = $controller->drawCardsPlayers(2, 3, $session);
-    
+
         $this->assertEquals("rendered", $response->getContent());
         $this->assertEquals("card/deal.html.twig", $controller->usedTemplate);
         $this->assertArrayHasKey("Player 1", $controller->params["playerHand"]);

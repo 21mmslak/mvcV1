@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello!{% endblock %}
+
+{% block body %}
+<table style="width:100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; border: 1px solid #ccc;">Titel</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">ISBN</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Författare</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Bild</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ccc;">
+                    <a href="{{ path('book_show', { id: book.id }) }}">
+                        {{ book.titel|e }}
+                    </a>
+                </td>
+                <td style="padding: 10px; border: 1px solid #ccc;">{{ book.ISBN|e }}</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">{{ book.författare|e }}</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">
+                    {% if book.bild %}
+                        <img src="{{ book.bild }}" alt="Bokomslag" style="max-width: 200px;">
+                    {% else %}
+                        Inget omslag
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="{{ path('book_reset') }}">Reset</a></p>
+{% endblock %}

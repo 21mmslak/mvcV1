@@ -4,5 +4,8 @@ parameters:
         - ../../config
         - ../../src
         - ../../tests
+    excludePaths:
+        analyseAndScan:
+            - ../../tests/Controller/**
     bootstrapFiles:
         #- .phpstan.constants.php

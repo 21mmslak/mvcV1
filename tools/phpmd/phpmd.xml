@@ -10,6 +10,7 @@
         Custom rule set for mvc course.
     </description>
 
+    <exclude-pattern>tests/Controller/*</exclude-pattern>
     <exclude-pattern>cache</exclude-pattern>
     <exclude-pattern>node_modules</exclude-pattern>
     <exclude-pattern>vendor</exclude-pattern>

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello!{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Lägg till ny bok</h1>
+
+    <form action="{{ path('book_store') }}" method="POST" enctype="multipart/form-data">
+        <label for="titel">Titel:</label>
+        <input type="text" id="titel" name="titel" required><br><br>
+
+        <label for="isbn">ISBN:</label>
+        <input type="text" id="isbn" name="isbn" required><br><br>
+
+        <label for="författare">Författare:</label>
+        <input type="text" id="författare" name="författare" required><br><br>
+
+        <label for="bild">Bild:</label>
+        <input type="file" id="bild" name="bild" accept="image/*" required><br><br>
+
+        <button type="submit">Spara bok</button>
+    </form>
+</div>
+
+{% endblock %}

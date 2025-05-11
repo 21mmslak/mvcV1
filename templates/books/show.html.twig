@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ book.titel }}{% endblock %}
+
+{% block body %}
+    <h1>{{ book.titel }}</h1>
+    <p><strong>ISBN:</strong> {{ book.ISBN }}</p>
+    <p><strong>Författare:</strong> {{ book.författare }}</p>
+
+    {% if book.bild %}
+        <img src="{{ book.bild }}" alt="Bokomslag" style="max-width: 200px;">
+    {% endif %}
+    
+    <p><a href="{{ path('library') }}">Tillbaka till listan</a></p>
+    <p><a href="{{ path('book_update', { id: book.id }) }}">Uppdatera Boken</a></p>
+    <p><a href="{{ path('book_delete', { id: book.id }) }}">Radera Boken</a></p>
+{% endblock %}

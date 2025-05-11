@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Card\DeckOfCards;
+use App\Repository\BooksRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -141,5 +142,46 @@ class ApiController extends AbstractController
             "player points" => $playerPoints,
             "dealer points" => $dealerPoints,
         ]);
+    }
+
+    #[Route("api/library/books", name: "books_api")]
+    public function booksApi(
+        BooksRepository $booksRepository
+    ): Response {
+        $books = $booksRepository->findAll();
+
+        $data = array_map(function ($book) {
+            return [
+                'id' => $book->getId(),
+                'titel' => $book->getTitel(),
+                'ISBN' => $book->getISBN(),
+                'författare' => $book->getFörfattare(),
+                'bild' => $book->getBild()
+            ];
+        }, $books);
+
+        return new JsonResponse(['books' => $data]);
+    }
+
+    #[Route("api/library/book/{isbn<\d+>}", name: "book_by_isbn_api")]
+    public function bookIsbnApi(
+        BooksRepository $booksRepository,
+        int $isbn
+    ): Response {
+        $book = $booksRepository->findOneBy(['ISBN' => $isbn]);
+
+        if (!$book) {
+            return new JsonResponse(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = [
+            'id' => $book->getId(),
+            'titel' => $book->getTitel(),
+            'ISBN' => $book->getISBN(),
+            'författare' => $book->getFörfattare(),
+            'bild' => $book->getBild()
+        ];
+
+        return new JsonResponse($data);
     }
 }

@@ -22,6 +22,8 @@
             <button type="submit">Deal N(1 std) cards X(1 std) player</button>
         </form>
         <li><a href="{{ path('game_api') }}">Show blackjack status</a></li>
+        <li><a href="{{ path('books_api') }}">Show Books</a></li>
+        <li><a href="{{ path('book_by_isbn_api', { isbn: 9780008560096 }) }}">Show Favorit Book</a></li>
     </ul>
 </div>
 {% endblock %}
