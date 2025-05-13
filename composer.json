@@ -82,6 +82,7 @@
         "phpunit": "XDEBUG_MODE=coverage vendor/bin/phpunit",
         "phpmd": "tools/phpmd/vendor/bin/phpmd . text tools/phpmd/phpmd.xml || true",
         "phpstan": "php -d memory_limit=512M tools/phpstan/vendor/bin/phpstan analyse -c tools/phpstan/phpstan.neon || true",
+        "phpmetrics": "tools/phpmetrics/vendor/bin/phpmetrics --config=tools/phpmetrics/phpmetrics.json",
         "lint": [
             "@phpmd",
             "@phpstan"
