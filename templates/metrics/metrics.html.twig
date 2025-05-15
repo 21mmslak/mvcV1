@@ -1,0 +1,63 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Metrics{% endblock %}
+
+{% block body %}
+
+<h1>Introduktion</h1>
+<p>
+    Codestyle - är hur koden ser ut inte hur den fungerar, tillexempel att man skriver $string = "Hej"; och inte $string="Hej"; det kan också vara 
+    att man använder camelcase och inte snakecase etc. Kan också vara en klass per fil och inte för många metoder i en klass.
+</p>
+<p>
+    Coverage - är hur mycekt av koden som täcks av tester så är det 50% coverage så täck 50% av koden av tester. Man vill ha en hög procent coverage.
+</p>
+<p>
+    Complexity - är hur många olika vägar koden kan ta så en if-sats är 1 i complexity sedan för varje else if blir complexity en till. Man vill 
+    ha så låg complexity som möjligt, då hög complexity gör koden svår att förstå och testa.
+</p>
+<p>
+    Cohesion - är hur väl relaterade ansvarsområdet för en klass har, man vill ha en hög cohesion då klassen blir lätt att förstå men också lätt att testa.
+    Medans låg cohesion gör att koden blir svår att testa och svårt att återanvända.
+</p>
+<p>
+    Coupling - är ett värde på hur beroende två klasser är av varanda, man vill ha så låg coupling som det går då det minimerar risken för att man ändrar i 
+    klass a och förstör då klass b. Det gör också koden mer flexibel och lättare att testa.
+</p>
+<p>
+    CRAP - är ett mått på hur "farligt" det är att ändra i den metoden, det räknas ut på följande sätt CRAP = (CC² × (1 - coverage%)³) + CC där: CC = Cyclomatic 
+    Complexity (antal möjliga vägar genom koden), coverage% = hur mycket av funktionen är testad.
+</p>
+
+<h2>PHPMetrics</h2>
+<img src="{{ asset('img/PHPMetrics.png') }}" alt="PHP Metrics">
+<p>
+    Jag tycker att de flesta av mina mätvärden är bra, men jag ser i dessa blobbar att jag har lite och jobba med i vissa filer (mest controllers). Jag vill få ner de stora röda 
+    blobbarna, min tanke är att jobba mycket med Coupling, Complexity och Cohesion då jag kan se att de är de värderna som sticker ut lite. Så jag tror att om jag fixar till främst 
+    cohesion så kommer jag få ner dessa blobbar mycker. När jag analyser LCOM så ser jag att de som har högst tal där är de med störst röda blobbar.
+</p>
+<img src="{{ asset('img/PHPMetricsVal.png') }}" alt="PHP Metrics Values" style="width: 800px;">
+
+
+<h2>Scrutinizer</h2>
+<img src="{{ asset('https://scrutinizer-ci.com/g/21mmslak/mvcV1/badges/quality-score.png?b=main') }}" alt="Badges">
+<img src="{{ asset('https://scrutinizer-ci.com/g/21mmslak/mvcV1/badges/coverage.png?b=main') }}" alt="Badges">
+<img src="{{ asset('https://scrutinizer-ci.com/g/21mmslak/mvcV1/badges/build.png?b=main') }}" alt="Badges">
+<img src="{{ asset('https://scrutinizer-ci.com/g/21mmslak/mvcV1/badges/code-intelligence.svg?b=main') }}" alt="Badges">
+<p>
+    Jag tycker att de flesta av mina mätvärden är väldigt bra, det som jag har längre i är coverage då jag bara gjort tester för blackjack, card och lite controller 
+    så om jag fortsätter att göra lite tester för dice så kommer den gå upp snabbt. Det jag ska jobba med för att förbättra min kod är coverage, complexity och cohesion 
+    fixar jag till dessa värden tror jag att min kod kommer bli mycket bättre. Jag kan se att vissa klasser har lite för hög complexity se bild.
+</p>
+<img src="{{ asset('img/scrutinizerVal.png') }}" alt="Scrutinizer Values" style="width: 800px;">
+
+
+<h2>Förbättringar</h2>
+<p>
+    De förbättringar jag har tänkt att göra som jag tror kommer göra mest skillnad för min kod är att öka coverage då jag tycker att 52% är lite lågt. Jag kommer sedan att 
+    försöka förbättra LCOM då jag tror att det verkligen kommer att hjälpa till med att få ner mängden stora röda bubblor. Sedan tänker jag att jag ska försöka förbättra 
+    complexity så gott jag kan. Om jag fixar till alla dessa tre bitar tror jag att min kod kommer bli väldigt mycekt bättre och lättare att sätta sig in i och mer buggfri. 
+</p>
+
+
+{% endblock %}
