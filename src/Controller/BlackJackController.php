@@ -5,6 +5,10 @@ namespace App\Controller;
 use App\Card\DeckOfCards;
 use App\BlackJack\BlackJack;
 use App\BlackJack\BlackJackRules;
+use App\BlackJack\BlackJackService;
+use App\BlackJack\BlackJackSession;
+use App\BlackJack\BlackJackRender;
+use App\BlackJack\BlackJackGameManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,30 +22,24 @@ use function PHPUnit\Framework\throwException;
 
 class BlackJackController extends AbstractController
 {
-    protected BlackJackRules $rules;
+    private BlackJackRules $rules;
+    private BlackJackService $blackJackService;
+    private BlackJackSession $state;
+    private BlackJackGameManager $gameManager;
 
-    public function __construct()
-    {
-        $this->rules = new BlackJackRules();
-    }
-    /**
-     * Assert that a value is an array.
-     * @return array<int|string, mixed>
-     */
-    private function assertArray(mixed $value, string $name): array
-    {
-        if (!is_array($value)) {
-            throw new LogicException("Expected array for {$name} in session, got something else.");
-        }
-        return $value;
-    }
 
-    private function assertInt(mixed $value, string $name): int
-    {
-        if (!is_int($value)) {
-            throw new LogicException("Expected int for {$name} in session, got something else.");
-        }
-        return $value;
+    public function __construct(
+        BlackJackRules $rules,
+        BlackJackService $blackJackService,
+        BlackJackSession $state,
+        BlackJackRender $renderer,
+        BlackJackGameManager $gameManager
+    ) {
+        $this->rules = $rules;
+        $this->blackJackService = $blackJackService;
+        $this->state = $state;
+        $this->renderer = $renderer;
+        $this->gameManager = $gameManager;
     }
 
     #[Route('/doc', name: 'doc')]
@@ -59,284 +57,169 @@ class BlackJackController extends AbstractController
     #[Route('/game_start', name: 'game_start')]
     public function gameStart(SessionInterface $session): Response
     {
-        $blackJack = new BlackJack();
-        $cards = $blackJack->startGame($session);
         if (!$session->has('coins')) {
-            $session->set('coins', 100);
+            $this->state->setCoins($session, 100);
         }
 
-        $playerStart = array_splice($cards, 0, 2);
-        $dealerStart = array_splice($cards, 0, 2);
+        if (!$session->get("game_started", false)) {
+            $result = $this->gameManager->startNewGame($session);
+            $session->set("game_started", true);
 
-        $playerPoints = $this->rules->countPoints($playerStart);
-        $dealerPoints = $this->rules->countPoints($dealerStart);
+            if ($result['isOver']) {
+                $winner = $this->rules->decideWinner(
+                    $result['dealerPoints'],
+                    $result['playerPoints'],
+                    $session
+                );
 
-        $session->set("player_cards", $playerStart);
-        $session->set("dealer_cards", $dealerStart);
-        $session->set("shuffled_deck", $cards);
-        $session->set("player_points", $playerPoints);
-        $session->set("dealer_points", $dealerPoints);
+                $this->gameManager->resetGame($session);
 
-        $over = $this->rules->checkOver($playerPoints);
-        if ($over) {
-            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
+                return $this->renderer->renderWinner(
+                    $winner,
+                    $result['dealerCards'],
+                    $result['playerCards'],
+                    $result['dealerPoints'],
+                    $result['playerPoints'],
+                    $session
+                );
+            }
 
-            return $this->render("black_jack/winner.html.twig", [
-                "winner" => $winner,
-                "dealer" => $session->get("dealer_cards", []),
-                "player" => $session->get("player_cards", []),
-                "dealerPoints" => $session->get("dealer_points", []),
-                "playerPoints" => $session->get("player_points", []),
-                "coins" => $session->get("coins", 100)
-            ]);
+            $split = $result['playerCards'][0]['value'] === $result['playerCards'][1]['value'];
+
+            return $this->renderer->renderGameStart(
+                $result['playerCards'],
+                $result['dealerCards'],
+                $result['dealerPoints'],
+                $result['playerPoints'],
+                $split,
+                $session
+            );
         }
 
-        $split = false;
-        $session->set("is_split", false);
-        if ($playerStart[0]['value'] === $playerStart[1]['value']) {
-            $split = true;
-        }
-
-        return $this->render("black_jack/game_start.html.twig", [
-            "player" => $playerStart,
-            "dealer" => $dealerStart,
-            "dealerPoints" => $dealerPoints,
-            "playerPoints" => $playerPoints,
-            "split" => $split,
-            "splittat" => false,
-            "coins" => $session->get("coins", 100)
-        ]);
+        return $this->renderer->renderGameStart(
+            $this->state->getPlayerCards($session),
+            $this->state->getDealerCards($session),
+            $this->state->getPoints($session, "dealer_points"),
+            $this->state->getPoints($session, "player_points"),
+            $this->state->get($session, "is_split", false),
+            $session
+        );
     }
 
     #[Route('/add_card', name: 'add_card')]
     public function addCard(SessionInterface $session): Response
     {
-        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
+        $result = $this->gameManager->addCardToPlayer($session);
 
-        $newCard = array_shift($cards);
+        if ($result['isOver']) {
+            $this->gameManager->resetGame($session);
+            $winner = $this->rules->decideWinner(
+                $result['dealerPoints'],
+                $result['playerPoints'],
+                $session
+            );
 
-        $playerCards = $this->assertArray($session->get("player_cards"), "player_cards");
-        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
-        $dealerPoints = $this->assertInt($session->get("dealer_points"), "dealer_points");
-        $playerPoints = $this->assertInt($session->get("player_points"), "player_points");
-
-        if ($playerPoints < 21) {
-            $playerCards[] = $newCard;
+            return $this->renderer->renderWinner(
+                $winner,
+                $result['dealerCards'],
+                $result['playerCards'],
+                $result['dealerPoints'],
+                $result['playerPoints'],
+                $session
+            );
         }
 
-        $playerPoints = $this->rules->countPoints($playerCards);
-
-        $session->set("shuffled_deck", $cards);
-        $session->set("player_cards", $playerCards);
-        $session->set("player_points", $playerPoints);
-
-        $over = $this->rules->checkOver($playerPoints);
-        if ($over) {
-            $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
-
-            return $this->render("black_jack/winner.html.twig", [
-                "winner" => $winner,
-                "dealer" => $session->get("dealer_cards", []),
-                "player" => $session->get("player_cards", []),
-                "dealerPoints" => $session->get("dealer_points", []),
-                "playerPoints" => $session->get("player_points", []),
-                "coins" => $session->get("coins", 100)
-            ]);
-        }
-
-        return $this->render("black_jack/game_start.html.twig", [
-            "player" => $playerCards,
-            "dealer" => $dealerCards,
-            "dealerPoints" => $dealerPoints,
-            "playerPoints" => $playerPoints,
-            "coins" => $session->get("coins", 100),
-            "split" => $session->get("is_split")
-        ]);
+        return $this->renderer->renderGameStart(
+            $result['playerCards'],
+            $result['dealerCards'],
+            $result['dealerPoints'],
+            $result['playerPoints'],
+            $this->state->get($session, "is_split", false),
+            $session
+        );
     }
-
-
-
 
     #[Route('/add_card_split', name: 'add_card_split')]
     public function addCardSplit(SessionInterface $session): Response
     {
-        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
-        $activeHand = $session->get("active_hand", "hand1");
+        $result = $this->gameManager->addCardToSplitHand($session);
 
-        $newCard = array_shift($cards);
-
-        $hand1 = $this->assertArray($session->get("hand1"), "hand1");
-        $hand2 = $this->assertArray($session->get("hand2"), "hand2");
-        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
-        $dealerPoints = $this->assertInt($session->get("dealer_points"), "dealer_points");
-
-        if ($activeHand === "hand1") {
-            $hand1[] = $newCard;
-            $playerPoints1 = $this->rules->countPoints($hand1);
-            $session->set("hand1", $hand1);
-            $session->set("player_points_1", $playerPoints1);
-
-            if ($playerPoints1 >= 21) {
-                $session->set("active_hand", "hand2");
-            }
-
-        } elseif ($activeHand === "hand2") {
-            $hand2[] = $newCard;
-            $playerPoints2 = $this->rules->countPoints($hand2);
-            $session->set("hand2", $hand2);
-            $session->set("player_points_2", $playerPoints2);
-
-            if ($playerPoints2 >= 20) {
-                return $this->redirectToRoute("stand_split");
-            }
+        if ($result['shouldRedirect']) {
+            return $this->redirectToRoute("stand_split");
         }
 
-        $session->set("shuffled_deck", $cards);
-
-        return $this->render("black_jack/game_split.html.twig", [
-            "dealer" => $dealerCards,
-            "dealerPoints" => $dealerPoints,
-            "hand1" => $hand1,
-            "hand2" => $hand2,
-            "totplayer1" => $session->get("player_points_1", 0),
-            "totplayer2" => $session->get("player_points_2", 0),
-            "splittat" => true,
-            "split" => false,
-            "coins" => $session->get("coins", 100)
-        ]);
+        return $this->renderer->renderGameSplit(
+            $result['dealerCards'],
+            $result['dealerPoints'],
+            $result['hand1'],
+            $result['hand2'],
+            $result['playerPoints1'],
+            $result['playerPoints2'],
+            $result['activeHand'],
+            $session
+        );
     }
-
-
-
-
 
     #[Route('/stand', name: 'stand')]
     public function stand(SessionInterface $session): Response
     {
-        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
-        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
-        $playerPoints = $this->assertInt($session->get("player_points"), "player_points");
+        $result = $this->gameManager->stand($session);
 
-        $dealerPoints = $this->rules->countPoints($dealerCards);
-        while ($dealerPoints < 16) {
-            $newCard = array_shift($cards);
-            $dealerCards[] = $newCard;
-            $dealerPoints = $this->rules->countPoints($dealerCards);
-        }
-
-        $session->set("dealer_cards", $dealerCards);
-        $session->set("dealer_points", $dealerPoints);
-        $session->set("shuffled_deck", $cards);
-
-        $winner = $this->rules->decideWinner($dealerPoints, $playerPoints, $session);
-
-        return $this->render("black_jack/winner.html.twig", [
-            "winner" => $winner,
-            "dealer" => $dealerCards,
-            "player" => $session->get("player_cards", []),
-            "dealerPoints" => $dealerPoints,
-            "playerPoints" => $playerPoints,
-            "coins" => $session->get("coins", 100)
-        ]);
+        return $this->renderer->renderWinner(
+            $result['winner'],
+            $result['dealerCards'],
+            $result['playerCards'],
+            $result['dealerPoints'],
+            $result['playerPoints'],
+            $session
+        );
     }
-
-
-
 
     #[Route('/stand_split', name: 'stand_split')]
     public function standSplit(SessionInterface $session): Response
     {
-        $activeHand = $session->get("active_hand", "hand1");
+        $result = $this->gameManager->standSplit($session);
 
-        if ($activeHand === "hand1") {
-            $session->set("active_hand", "hand2");
-
-            return $this->render("black_jack/game_split.html.twig", [
-                "dealer" => $session->get("dealer_cards", []),
-                "dealerPoints" => $session->get("dealer_points", []),
-                "hand1" => $session->get("hand1", []),
-                "hand2" => $session->get("hand2", []),
-                "totplayer1" => $session->get("player_points_1", 0),
-                "totplayer2" => $session->get("player_points_2", 0),
-                "splittat" => true,
-                "split" => false,
-                "coins" => $session->get("coins", 100),
-                "active" => "hand2"
-            ]);
+        if ($result === null) {
+            return $this->renderer->renderGameSplit(
+                $this->state->getDealerCards($session),
+                $this->state->getPoints($session, "dealer_points"),
+                $this->state->getHand($session, "hand1"),
+                $this->state->getHand($session, "hand2"),
+                $this->state->getPoints($session, "player_points_1"),
+                $this->state->getPoints($session, "player_points_2"),
+                "hand2",
+                $session
+            );
         }
 
-        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
-        $dealerCards = $this->assertArray($session->get("dealer_cards"), "dealer_cards");
-        $player1Points = $this->assertInt($session->get("player_points_1"), "player_points_1");
-        $player2Points = $this->assertInt($session->get("player_points_2"), "player_points_2");
-
-        $dealerPoints = $this->rules->countPoints($dealerCards);
-        while ($dealerPoints < 16) {
-            $newCard = array_shift($cards);
-            $dealerCards[] = $newCard;
-            $dealerPoints = $this->rules->countPoints($dealerCards);
-        }
-
-        $winner1 = $this->rules->decideWinner($dealerPoints, $player1Points, $session);
-        $winner2 = $this->rules->decideWinner($dealerPoints, $player2Points, $session);
-
-        $session->set("shuffled_deck", $cards);
-        $session->set("dealer_cards", $dealerCards);
-        $session->set("dealer_points", $dealerPoints);
-
-        return $this->render("black_jack/winner_split.html.twig", [
-            "dealer" => $dealerCards,
-            "dealerPoints" => $dealerPoints,
-            "hand1" => $session->get("hand1", []),
-            "hand2" => $session->get("hand2", []),
-            "totplayer1" => $player1Points,
-            "totplayer2" => $player2Points,
-            "winner1" => $winner1,
-            "winner2" => $winner2,
-            "splittat" => true,
-            "coins" => $session->get("coins", 100)
-        ]);
+        return $this->renderer->renderWinnerSplit(
+            $result['dealerCards'],
+            $result['dealerPoints'],
+            $result['hand1'],
+            $result['hand2'],
+            $result['points1'],
+            $result['points2'],
+            $result['winner1'],
+            $result['winner2'],
+            $session
+        );
     }
-
-
-
 
     #[Route('/split', name: 'split')]
     public function split(SessionInterface $session): Response
     {
-        $session->set("is_split", true);
+        $result = $this->gameManager->split($session);
 
-        $cards = $this->assertArray($session->get("shuffled_deck"), "shuffled_deck");
-        $playerCards = $this->assertArray($session->get("player_cards"), "player_cards");
-
-        $hand1 = [$playerCards[0]];
-        $hand2 = [$playerCards[1]];
-
-        $hand1[] = array_shift($cards);
-        $hand2[] = array_shift($cards);
-
-        $hand1points = $this->rules->countPoints($hand1);
-        $hand2points = $this->rules->countPoints($hand2);
-
-        $session->set("hand1", $hand1);
-        $session->set("hand2", $hand2);
-        $session->set("player_points_1", $hand1points);
-        $session->set("player_points_2", $hand2points);
-        $session->set("active_hand", "hand1");
-        $session->set("shuffled_deck", $cards);
-        $session->set("active_hand", "hand1");
-
-        return $this->render("black_jack/game_split.html.twig", [
-            "dealer" => $session->get("dealer_cards", []),
-            "dealerPoints" => $session->get("dealer_points", []),
-            "hand1" => $hand1,
-            "hand2" => $hand2,
-            "splittat" => true,
-            "split" => false,
-            "totplayer1" => $hand1points,
-            "totplayer2" => $hand2points,
-            "active" => "hand1",
-            "coins" => $session->get("coins", 100)
-        ]);
+        return $this->renderer->renderGameSplit(
+            $result['dealerCards'],
+            $result['dealerPoints'],
+            $result['hand1'],
+            $result['hand2'],
+            $result['points1'],
+            $result['points2'],
+            $result['active'],
+            $session
+        );
     }
 }

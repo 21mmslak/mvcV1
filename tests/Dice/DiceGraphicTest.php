@@ -19,7 +19,7 @@ class DiceGraphicTest extends TestCase
     public function testGetAsStringReturnsCorrectSymbol(): void
     {
         $dice = new DiceGraphic();
-        $rolledValue = $dice->roll();
+        $dice->roll();
 
         $symbol = $dice->getAsString();
 

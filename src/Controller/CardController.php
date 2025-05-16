@@ -18,7 +18,6 @@ class CardController extends AbstractController
     public function home(
     ): Response {
         // $session->set("card_message", "Välkommen till kortspelet!");
-
         return $this->render('card/home.html.twig');
     }
 

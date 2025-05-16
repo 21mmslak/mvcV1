@@ -4,6 +4,7 @@ namespace App\BlackJack;
 
 use App\Card\DeckOfCards;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\BlackJack\BlackJackService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,30 +15,30 @@ use App\Controller\CardController;
 class BlackJack
 {
     /**
-     * Startar spelet och lägger blandad kortlek i sessionen.
+     * Skapar och blandar en ny kortlek.
      *
-     * @param SessionInterface $session
      * @return array<int, array{card: string, value: string, suit: string}>
      */
-    public function startGame(
-        SessionInterface $session
-    ): array {
+    public function startGame(): array
+    {
         $deck = new DeckOfCards();
         $deck->shuffle();
 
-        $cards = $deck->getDeck();
-
-        $cardData = array_map(function ($card) {
-            return [
-                "card" => $card->getAsString(),
-                "value" => $card->getValue(),
-                "suit" => $card->getSuit()
-            ];
-        }, $cards);
-
-        $session->set("shuffled_deck", $cardData);
-
-        return $cardData;
+        return $this->convertToArray($deck->getDeck());
     }
 
+    /**
+     * Konverterar kort till en array med enklare data.
+     *
+     * @param array<int, \App\Card\Card> $cards
+     * @return array<int, array{card: string, value: string, suit: string}>
+     */
+    private function convertToArray(array $cards): array
+    {
+        return array_map(fn($card) => [
+            'card' => $card->getAsString(),
+            'value' => $card->getValue(),
+            'suit' => $card->getSuit()
+        ], $cards);
+    }
 }
