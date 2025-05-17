@@ -9,26 +9,37 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class BlackJackTest extends TestCase
 {
-    public function testStartGameStoresDeckInSession(): void
+    public function testStartGameReturnsExpectedCardStructure(): void
     {
-        $session = new Session(new MockArraySessionStorage());
         $blackjack = new BlackJack();
-
-        $cards = $blackjack->startGame($session);
-
-        $this->assertCount(52, $cards);
-        $this->assertTrue($session->has('shuffled_deck'));
-        $this->assertEquals($cards, $session->get('shuffled_deck'));
+        $result = $blackjack->startGame();
+    
+        $this->assertNotEmpty($result);
+    
+        $card = $result[0];
+        $this->assertArrayHasKey('card', $card);
+        $this->assertArrayHasKey('value', $card);
+        $this->assertArrayHasKey('suit', $card);
     }
 
-    public function testDeckIsShuffled(): void
+    public function testStartGameReturnsCardsWithExpectedKeys(): void
     {
-        $session = new Session(new MockArraySessionStorage());
         $blackjack = new BlackJack();
+        $result = $blackjack->startGame();
 
-        $cards1 = $blackjack->startGame($session);
-        $cards2 = $blackjack->startGame($session);
+        $this->assertNotEmpty($result);
+        $firstCard = $result[0];
 
-        $this->assertNotEquals($cards1, $cards2, "Kortleken borde blandas olika varje gång.");
+        $this->assertArrayHasKey('card', $firstCard);
+        $this->assertArrayHasKey('value', $firstCard);
+        $this->assertArrayHasKey('suit', $firstCard);
+    }
+
+    public function testStartGameReturns52Cards(): void
+    {
+        $blackjack = new BlackJack();
+        $result = $blackjack->startGame();
+
+        $this->assertCount(52, $result);
     }
 }

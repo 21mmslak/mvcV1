@@ -27,4 +27,9 @@ class Card
     {
         return "{$this->value} of {$this->suit}";
     }
+
+    public function getCardCode(): string
+    {
+        return $this->value . $this->suit;
+    }
 }
