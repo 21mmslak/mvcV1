@@ -236,15 +236,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/App-BlackJack-BlackJackSession.html#method_setActiveHand"
         },                {
-            "fqsen": "\\App\\BlackJack\\BlackJackSession\u003A\u003AgetArray\u0028\u0029",
-            "name": "getArray",
-            "summary": "",
-            "url": "classes/App-BlackJack-BlackJackSession.html#method_getArray"
-        },                {
             "fqsen": "\\App\\BlackJack\\BlackJackSession\u003A\u003AgetInt\u0028\u0029",
             "name": "getInt",
             "summary": "",
             "url": "classes/App-BlackJack-BlackJackSession.html#method_getInt"
+        },                {
+            "fqsen": "\\App\\BlackJack\\BlackJackSession\u003A\u003AgetString\u0028\u0029",
+            "name": "getString",
+            "summary": "",
+            "url": "classes/App-BlackJack-BlackJackSession.html#method_getString"
         },                {
             "fqsen": "\\App\\BlackJack\\BlackJackSession\u003A\u003Aget\u0028\u0029",
             "name": "get",
@@ -280,6 +280,11 @@ Search.appendIndex(
             "name": "getAsString",
             "summary": "",
             "url": "classes/App-Card-Card.html#method_getAsString"
+        },                {
+            "fqsen": "\\App\\Card\\Card\u003A\u003AgetCardCode\u0028\u0029",
+            "name": "getCardCode",
+            "summary": "",
+            "url": "classes/App-Card-Card.html#method_getCardCode"
         },                {
             "fqsen": "\\App\\Card\\Card\u003A\u003A\u0024suit",
             "name": "suit",
@@ -490,11 +495,6 @@ Search.appendIndex(
             "name": "rules",
             "summary": "",
             "url": "classes/App-Controller-BlackJackController.html#property_rules"
-        },                {
-            "fqsen": "\\App\\Controller\\BlackJackController\u003A\u003A\u0024blackJackService",
-            "name": "blackJackService",
-            "summary": "",
-            "url": "classes/App-Controller-BlackJackController.html#property_blackJackService"
         },                {
             "fqsen": "\\App\\Controller\\BlackJackController\u003A\u003A\u0024state",
             "name": "state",

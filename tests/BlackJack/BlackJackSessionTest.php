@@ -140,10 +140,10 @@ class BlackJackSessionTest extends TestCase
         $session->method('get')
             ->with('coins', 0)
             ->willReturn(200);
-    
+
         $bjSession = new BlackJackSession();
         $result = $bjSession->get($session, 'coins', 0);
-    
+
         $this->assertSame(200, $result);
     }
 

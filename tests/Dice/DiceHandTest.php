@@ -6,10 +6,9 @@ use PHPUnit\Framework\TestCase;
 use App\Dice\DiceHand;
 use App\Dice\Dice;
 
-
 class DiceHandTest extends TestCase
 {
-    public function testAdd() : void
+    public function testAdd(): void
     {
         $testHand = new DiceHand();
         $dice = new Dice();

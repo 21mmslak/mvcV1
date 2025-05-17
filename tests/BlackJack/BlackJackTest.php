@@ -13,9 +13,9 @@ class BlackJackTest extends TestCase
     {
         $blackjack = new BlackJack();
         $result = $blackjack->startGame();
-    
+
         $this->assertNotEmpty($result);
-    
+
         $card = $result[0];
         $this->assertArrayHasKey('card', $card);
         $this->assertArrayHasKey('value', $card);

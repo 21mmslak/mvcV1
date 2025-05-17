@@ -1,4 +1,5 @@
 <?php
+
 // @phpstan-ignore-file
 
 // namespace App\Controller;

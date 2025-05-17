@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1747474777">
-  <project timestamp="1747474777">
+<coverage generated="1747511535">
+  <project timestamp="1747511535">
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/BlackJack/BlackJack.php">
       <class name="App\BlackJack\BlackJack" namespace="global">
         <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
@@ -15,7 +15,7 @@
       <line num="32" type="stmt" count="8"/>
       <line num="33" type="stmt" count="8"/>
       <line num="34" type="stmt" count="8"/>
-      <metrics loc="36" ncloc="25" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
+      <metrics loc="37" ncloc="26" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/BlackJack/BlackJackGameManager.php">
       <class name="App\BlackJack\BlackJackGameManager" namespace="global">
@@ -88,7 +88,7 @@
       <line num="105" type="stmt" count="2"/>
       <line num="106" type="stmt" count="2"/>
       <line num="108" type="stmt" count="2"/>
-      <line num="109" type="stmt" count="2"/>
+      <line num="109" type="stmt" count="1"/>
       <line num="112" type="stmt" count="1"/>
       <line num="113" type="stmt" count="1"/>
       <line num="114" type="stmt" count="1"/>
@@ -198,7 +198,7 @@
       <line num="258" type="stmt" count="3"/>
       <line num="259" type="stmt" count="3"/>
       <line num="260" type="stmt" count="3"/>
-      <metrics loc="561" ncloc="310" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="169" coveredstatements="169" elements="177" coveredelements="177"/>
+      <metrics loc="263" ncloc="263" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="169" coveredstatements="169" elements="177" coveredelements="177"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/BlackJack/BlackJackRender.php">
       <class name="App\BlackJack\BlackJackRender" namespace="global">
@@ -252,7 +252,7 @@
       <line num="119" type="stmt" count="1"/>
       <line num="120" type="stmt" count="1"/>
       <line num="121" type="stmt" count="1"/>
-      <metrics loc="123" ncloc="105" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="43" coveredstatements="43" elements="48" coveredelements="48"/>
+      <metrics loc="124" ncloc="106" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="43" coveredstatements="43" elements="48" coveredelements="48"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/BlackJack/BlackJackRules.php">
       <class name="App\BlackJack\BlackJackRules" namespace="global">
@@ -269,10 +269,10 @@
       <line num="32" type="stmt" count="8"/>
       <line num="33" type="stmt" count="8"/>
       <line num="35" type="stmt" count="8"/>
-      <line num="36" type="stmt" count="5"/>
+      <line num="36" type="stmt" count="6"/>
       <line num="37" type="stmt" count="7"/>
-      <line num="38" type="stmt" count="4"/>
-      <line num="39" type="stmt" count="4"/>
+      <line num="38" type="stmt" count="5"/>
+      <line num="39" type="stmt" count="5"/>
       <line num="41" type="stmt" count="8"/>
       <line num="44" type="stmt" count="8"/>
       <line num="45" type="stmt" count="2"/>
@@ -306,7 +306,7 @@
       <line num="16" type="method" name="startGame" visibility="public" complexity="1" crap="1" count="5"/>
       <line num="18" type="stmt" count="5"/>
       <line num="19" type="stmt" count="5"/>
-      <metrics loc="21" ncloc="21" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="5" coveredelements="5"/>
+      <metrics loc="22" ncloc="22" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" elements="5" coveredelements="5"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/BlackJack/BlackJackSession.php">
       <class name="App\BlackJack\BlackJackSession" namespace="global">
@@ -366,7 +366,7 @@
       <line num="145" type="stmt" count="2"/>
       <line num="148" type="method" name="set" visibility="public" complexity="1" crap="1" count="3"/>
       <line num="150" type="stmt" count="3"/>
-      <metrics loc="152" ncloc="124" classes="1" methods="18" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="36" coveredstatements="36" elements="54" coveredelements="54"/>
+      <metrics loc="153" ncloc="125" classes="1" methods="18" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="36" coveredstatements="36" elements="54" coveredelements="54"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/Card/Card.php">
       <class name="App\Card\Card" namespace="global">
@@ -674,7 +674,7 @@
       <line num="222" type="stmt" count="0"/>
       <line num="223" type="stmt" count="0"/>
       <line num="224" type="stmt" count="0"/>
-      <metrics loc="226" ncloc="223" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="123" coveredstatements="0" elements="132" coveredelements="0"/>
+      <metrics loc="227" ncloc="224" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="123" coveredstatements="0" elements="132" coveredelements="0"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/Controller/BookController.php">
       <class name="App\Controller\BookController" namespace="global">
@@ -1039,7 +1039,7 @@
       </class>
       <line num="11" type="method" name="metrics" visibility="public" complexity="1" crap="2" count="0"/>
       <line num="14" type="stmt" count="0"/>
-      <metrics loc="16" ncloc="16" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="0" elements="2" coveredelements="0"/>
+      <metrics loc="17" ncloc="17" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="0" elements="2" coveredelements="0"/>
     </file>
     <file name="/Users/bobobackmnan/dbwebb-kurser/mvc/me/report/src/Controller/ProductController.php">
       <class name="App\Controller\ProductController" namespace="global">
@@ -1238,6 +1238,6 @@
       <line num="52" type="stmt" count="0"/>
       <metrics loc="80" ncloc="44" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="0" elements="16" coveredelements="0"/>
     </file>
-    <metrics files="28" loc="2882" ncloc="2406" classes="27" methods="151" coveredmethods="82" conditionals="0" coveredconditionals="0" statements="918" coveredstatements="467" elements="1069" coveredelements="549"/>
+    <metrics files="28" loc="2590" ncloc="2365" classes="27" methods="151" coveredmethods="82" conditionals="0" coveredconditionals="0" statements="918" coveredstatements="467" elements="1069" coveredelements="549"/>
   </project>
 </coverage>

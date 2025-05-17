@@ -72,4 +72,4 @@ class BlackJackRenderTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('winner_split_html', $response->getContent());
     }
-} 
+}

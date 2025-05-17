@@ -58,6 +58,87 @@
     försöka förbättra LCOM då jag tror att det verkligen kommer att hjälpa till med att få ner mängden stora röda bubblor. Sedan tänker jag att jag ska försöka förbättra 
     complexity så gott jag kan. Om jag fixar till alla dessa tre bitar tror jag att min kod kommer bli väldigt mycekt bättre och lättare att sätta sig in i och mer buggfri. 
 </p>
+<p>
+    De nya mätvärderna är lite bättre än det tidigare, jag har mycket "skärp kod" kvar från tex dice som ställer till det lite med värderna. Jag valde att fokusera som sagt 
+    på blackjack då det är där jag hade "sämst" kod med hög complexity med 16 i min controller klass. I scrutinizer så är de nya mätvärderna typ lika som innan jag hade 
+    väligt bra värden där innan så jag la mer fokus på att förbättra koden i metrics istället. Jag skulle säga att resultet speglar kanske inte rikitgit jobbet jag gjort 
+    men jag vet att de stora förändringar jag gjort har gjort att koden blir mycket lättare att underhålla och förstå sig på och testa.
+</p>
+
+<h3>BlackJackController</h3>
+<table border="1" cellspacing="0" cellpadding="5">
+  <thead>
+    <tr>
+      <th>Värde</th>
+      <th>Gamla</th>
+      <th>Nya</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cyclomatic Complexity</td>
+      <td>16</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>Maintainability Index</td>
+      <td>28.6</td>
+      <td>60.2</td>
+    </tr>
+    <tr>
+      <td>Complexity</td>
+      <td>25</td>
+      <td>15</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Scrutinizer</h3>
+<table border="1" cellspacing="0" cellpadding="5">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Gamla</th>
+      <th>Nya</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Code value</td>
+      <td>10</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>Coverage</td>
+      <td>52</td>
+      <td>51</td>
+    </tr>
+    <tr>
+      <td>Build</td>
+      <td>Passed</td>
+      <td>Passed</td>
+    </tr>
+  </tbody>
+</table>
+<p>Coverage är egentligen bättre jag tog bort min tester för BlackJackController så där av blev coverage lite lägre. Det som inte är testat nu är 
+controller klasserna och lite annan skärpkod.</p>
+<p>Jag gjrode så att jag skapde fler filer som då inte har gamla mätvärden. Men det gjorde att BlackJackController blev såååå mycket bättre både 
+i ett kod perspektiv men mest ur ett lätt läsligt perspektiv.</p>
+<img src="{{ asset('img/nyaVarden.png') }}" alt="PHP Metrics">
+<p>Lite fler gröna bublbor och lite mindre stora röda, några av de stora röda är "skärpkod" som hänger kvar.</p>
+
+<h2>Diskussion</h2>
+<p>
+    Jag tycker att det kanske inte är opptimat att göra dessa förbättringar i efterhand ur ett perspektiv då jag ofta upplevde att man skrev bra kod i en ny fil 
+    och då behövde fixa bättre kod i en annan fil, jag kännde bara för att börja om från noll och skriva allt på nytt. MEN andra sidan så har jag lärt mig sjuuuukt mycket 
+    tror det här var ett av de mest givande kmom i programmet. Om man alltid bara skriver sin kod och aldrig kolalr hur bra den är så kommer man aldrig skriva bättre kod,
+     så ur det perspektivet så är det grymt att jobba på det sätter. Men det tar jätte mycket tid att först skriva kod sedan behöva ändra en massa men man lär sig sjukt mycket av det.
+</p>
+<p>
+    Det sätt jag ser att man kan jobba med clean code är att för varje ny fil man gör så kollar man hur det blir med tex Scrutinizer eller PHPMetrics och ändrar direkt. Jag känner dock 
+    nu att jag fått mycekt bättre koll på de 6c som jag nu alltid kommer ha i bakhuvet när jag skriver kod, jag tror att om man tänker på det direkt så kanske det tar lite längre tid 
+    att skriva koden men i det långa loppet kommer du spara tid när du ska fixa buggar etc.
+</p>
 
 
 {% endblock %}

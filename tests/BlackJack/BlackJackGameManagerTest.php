@@ -21,15 +21,15 @@ class BlackJackGameManagerTest extends TestCase
         $state = $this->createMock(BlackJackSession::class);
         $service = $this->createMock(BlackJackService::class);
         $session = $this->createMock(SessionInterface::class);
-    
+
         $session->expects($this->once())
             ->method('set')
             ->with('game_started', false);
-    
+
         $session->expects($this->atLeastOnce())
             ->method('remove')
             ->with($this->isType('string'));
-    
+
         $manager = new BlackJackGameManager($rules, $state, $service);
         $manager->resetGame($session);
     }
@@ -62,18 +62,18 @@ class BlackJackGameManagerTest extends TestCase
         $session = new Session(
             new MockArraySessionStorage()
         );
-    
+
         $blackJack = new BlackJack();
         $rules = new BlackJackRules();
         $state = new BlackJackSession();
         $service = new BlackJackService($blackJack);
-    
+
         $manager = new BlackJackGameManager($rules, $state, $service);
-    
+
         $manager->startNewGame($session);
-    
+
         $result = $manager->addCardToPlayer($session);
-    
+
         // $this->assertIsArray($result);
         $this->assertArrayHasKey('playerCards', $result);
         $this->assertArrayHasKey('dealerCards', $result);
@@ -148,11 +148,11 @@ class BlackJackGameManagerTest extends TestCase
         $state = new BlackJackSession();
         $service = new BlackJackService(new BlackJack());
         $manager = new BlackJackGameManager($rules, $state, $service);
-    
+
         $state->setActiveHand($session, "hand1");
-    
+
         $result = $manager->standSplit($session);
-    
+
         $this->assertNull($result);
         $this->assertSame("hand2", $state->getActiveHand($session));
     }
@@ -163,11 +163,11 @@ class BlackJackGameManagerTest extends TestCase
         $rules = $this->createMock(BlackJackRules::class);
         $rules->method('countPoints')->willReturnOnConsecutiveCalls(10, 17);
         $rules->method('decideWinner')->willReturn('dealer');
-    
+
         $state = new BlackJackSession();
         $service = new BlackJackService(new BlackJack());
         $manager = new BlackJackGameManager($rules, $state, $service);
-    
+
         $state->setActiveHand($session, "hand2");
         $state->setDeck([
             new Card('7', 'clubs')
@@ -179,9 +179,9 @@ class BlackJackGameManagerTest extends TestCase
         $state->setPoints($session, "player_points_2", 19);
         $state->setHand($session, "hand1", [['value' => '9', 'suit' => '♦', 'card' => '9♦']]);
         $state->setHand($session, "hand2", [['value' => '10', 'suit' => '♣', 'card' => '10♣']]);
-    
+
         $result = $manager->standSplit($session);
-    
+
         $this->assertIsArray($result);
         $this->assertSame('dealer', $result['winner1']);
         $this->assertSame('dealer', $result['winner2']);
@@ -190,31 +190,31 @@ class BlackJackGameManagerTest extends TestCase
     public function testStandReturnsExpectedStructure(): void
     {
         $session = new Session(new MockArraySessionStorage());
-    
+
         $rules = $this->createMock(BlackJackRules::class);
         $rules->method('countPoints')->willReturnOnConsecutiveCalls(10, 17);
         $rules->method('decideWinner')->willReturn('player');
-    
+
         $state = new BlackJackSession();
         $service = new BlackJackService(new BlackJack());
         $manager = new BlackJackGameManager($rules, $state, $service);
-    
+
         $state->setDeck([
             new Card('7', 'clubs')
         ], $session);
-    
+
         $state->setDealerCards([
             ['value' => '5', 'suit' => 'hearts', 'card' => '5♥']
         ], $session);
-    
+
         $state->setPlayerCards([
             new Card('10', 'spades')
         ], $session);
-    
+
         $state->setPoints($session, 'player_points', 20);
-    
+
         $result = $manager->stand($session);
-    
+
         $this->assertArrayHasKey('dealerCards', $result);
         $this->assertArrayHasKey('dealerPoints', $result);
         $this->assertArrayHasKey('playerCards', $result);
@@ -258,16 +258,16 @@ class BlackJackGameManagerTest extends TestCase
         $state = $this->createMock(BlackJackSession::class);
         $service = $this->createMock(BlackJackService::class);
         $session = $this->createMock(SessionInterface::class);
-    
+
         $session->method('get')->willReturn(true);
         $state->method('getPlayerCards')->willReturn([]);
         $state->method('getDealerCards')->willReturn([]);
         $state->method('getPoints')->willReturn(0);
         $rules->method('checkOver')->willReturn(false);
-    
+
         $manager = new BlackJackGameManager($rules, $state, $service);
         $result = $manager->startNewGame($session);
-    
+
         $this->assertArrayHasKey('playerCards', $result);
         $this->assertArrayHasKey('dealerCards', $result);
         $this->assertArrayHasKey('dealerPoints', $result);

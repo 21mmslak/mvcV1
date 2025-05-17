@@ -27,7 +27,7 @@ class BlackJack
      */
     private function convertToArray(array $cards): array
     {
-        return array_map(fn($card) => [
+        return array_map(fn ($card) => [
             'card' => $card->getAsString(),
             'value' => $card->getValue(),
             'suit' => $card->getSuit()

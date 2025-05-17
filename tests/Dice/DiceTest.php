@@ -50,7 +50,7 @@ class DiceTest extends TestCase
     {
         $die = new Dice();
         $rolledValue = $die->roll();
-        
+
         $this->assertSame($rolledValue, $die->getValue());
         $this->assertGreaterThanOrEqual(1, $rolledValue);
         $this->assertLessThanOrEqual(6, $rolledValue);
