@@ -24,7 +24,7 @@
                 <td style="padding: 10px; border: 1px solid #ccc;">{{ book.författare|e }}</td>
                 <td style="padding: 10px; border: 1px solid #ccc;">
                     {% if book.bild %}
-                        <img src="{{ book.bild }}" alt="Bokomslag" style="max-width: 200px;">
+                        <img src="{{ asset('img/' ~ book.bild) }}" alt="Bild" style="max-width: 200px;">
                     {% else %}
                         Inget omslag
                     {% endif %}

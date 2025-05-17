@@ -85,6 +85,14 @@ final class BookController extends AbstractController
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger
     ): Response {
+        $targetDir = $this->getParameter('images_directory');
+
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0775, true);
+        }
+        if (!is_writable($targetDir)) {
+            throw new \RuntimeException('Katalogen är inte skrivbar: ' . $targetDir);
+        }
         $book = new Books();
 
         $book->setTitel($request->request->get('titel'));
@@ -100,7 +108,8 @@ final class BookController extends AbstractController
 
             $imageFile->move($this->getParameter('images_directory'), $newFilename);
 
-            $book->setBild('/img/' . $newFilename);
+            // $book->setBild('/img/' . $newFilename);
+            $book->setBild($newFilename);
         }
 
         $entityManager->persist($book);
@@ -172,7 +181,8 @@ final class BookController extends AbstractController
                 $newFilename
             );
 
-            $book->setBild('/img/' . $newFilename);
+            // $book->setBild('/img/' . $newFilename);
+            $book->setBild($newFilename);
         }
 
         $em->persist($book);
@@ -205,19 +215,22 @@ final class BookController extends AbstractController
         $book1->setTitel("A Brief History of Intelligence")
             ->setFörfattare("Max Bennett")
             ->setISBN("9780008560096")
-            ->setBild("/img/bok1.jpg");
+            ->setBild("bok1.jpg");
+            // ->setBild("/img/bok1.jpg");
 
         $book2 = new Books();
         $book2->setTitel("Be Useful")
             ->setFörfattare("Arnold Schwarzenegger")
             ->setISBN("9781529146530")
-            ->setBild("/img/bok2.jpg");
+            ->setBild("bok2.jpg");
+            // ->setBild("/img/bok2.jpg");
 
         $book3 = new Books();
         $book3->setTitel("Python från början")
             ->setFörfattare("Jan Skansholm")
             ->setISBN("9789144187617")
-            ->setBild("/img/bok3.jpg");
+            ->setBild("bok3.jpg");
+            // ->setBild("/img/bok3.jpg");
 
         $entityManager->persist($book1);
         $entityManager->persist($book2);

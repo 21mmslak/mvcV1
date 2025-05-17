@@ -17,7 +17,7 @@
 
         <label for="bild">Nuvarande bild:</label><br>
         {% if book.bild %}
-            <img src="{{ book.bild }}" alt="Nuvarande bild" style="max-width: 150px; margin-bottom: 1em;"><br>
+            <img src="{{ asset('img/' ~ book.bild) }}" alt="Nuvarande bild" style="max-width: 200px;">
         {% else %}
             <p>Ingen bild uppladdad ännu.</p>
         {% endif %}
