@@ -1,0 +1,27 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}Black Jack{% endblock %}
+
+{% block body %}
+
+<h1>Black Jack</h1>
+<h2>Dealer</h2>
+
+<ul>
+    {% for card in data.dealer_cards %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+<p>Points: {{ data.dealer_points }}</p>
+
+<h2>Player</h2>
+<ul>
+    {% for card in data.player_cards %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+<p>Points: {{ data.player_points }}</p>
+
+<p>Coins: {{ data.coins }}</p>
+
+{% endblock %}

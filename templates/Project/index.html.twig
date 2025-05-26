@@ -1,0 +1,14 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}Black Jack{% endblock %}
+
+{% block body %}
+<h1>Black Jack</h1>
+
+<p>
+    <form action="{{ path('proj_main') }}" method="get">
+        <button type="submit">Starta Black Jack</button>
+    </form>
+</p>
+
+{% endblock %}
