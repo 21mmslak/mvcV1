@@ -31,27 +31,47 @@
 {% endif %}
 
 <h2>Player</h2>
+<h3>Hand 1</h3>
 <ul>
-    {% for card in data.player_cards %}
+    {% for card in data.hand1 %}
         <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
-<p>Points: {{ data.player_points }}</p>
+<p>Points hand 1: {{ data.hand1Points }}</p>
+
+<a href="{{ path('add_split') }}">
+    <button type="button" {% if data.active_hand != 'hand1' %}disabled{% endif %}>
+        Hit
+    </button>
+</a>
+
+<a href="{{ path('stand_split') }}">
+    <button type="button" {% if data.active_hand != 'hand1' %}disabled{% endif %}>
+        Stand
+    </button>
+</a>
+
+<h3>Hand 2</h3>
+<ul>
+    {% for card in data.hand2 %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+<p>Points hand 2: {{ data.hand2Points }}</p>
+
+<a href="{{ path('add_split') }}">
+    <button type="button" {% if data.active_hand != 'hand2' %}disabled{% endif %}>
+        Hit
+    </button>
+</a>
+<a href="{{ path('stand_split') }}">
+    <button type="button" {% if data.active_hand != 'hand2' %}disabled{% endif %}>
+        Stand
+    </button>
+</a>
 
 <p>Coins: {{ data.coins }}</p>
 
-{% if data.game_started == true %}
-<a href="{{ path('add_card') }}">
-    <button type="button">Hit</button>
-</a>
-<a href="{{ path('stand') }}">
-    <button type="button">Stand</button>
-</a>
-<a href="{{ path('split') }}">
-    <button type="button" {% if data.player_cards[0].value != data.player_cards[1].value %}disabled{% endif %}>
-        Split
-    </button>
-</a>
-{% endif %}
+
 
 {% endblock %}

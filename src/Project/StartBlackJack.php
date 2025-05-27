@@ -18,19 +18,40 @@ class StartBlackJack
         $deck = new StartDeck();
         $cards = $deck->startGame();
 
-        $playerCards = array_splice($cards, 0, 2);
-        $dealerCards = array_splice($cards, 0, 2);
-
+        // $playerCards = array_splice($cards, 0, 2);
+        $dealerCardOne = array_splice($cards, 0, 1);
+        $dealerCardTwo = array_splice($cards, 0, 1);
+        $dealerCards = array_splice($cards, 0, 3);
+        
+        //fake data
+        $playerCards = [
+            [
+                'card' => '<span class=\"black-card\">K♠</span>',
+                'value' => 'K',
+                'suit' => 'Spades'
+            ],
+            [
+                'card' => '<span class=\"red-card\">K♥</span>',
+                'value' => 'K',
+                'suit' => 'Hearts'
+            ]
+        ];
+        
+        
         $rules = new Rules();
         $playerPoints = $rules->countPoints($playerCards);
-        $dealerPoints = $rules->countPoints($dealerCards);
+        $dealerPointsStart = $rules->countPoints($dealerCardOne);
+        $dealerPoints = $rules->countPoints($dealerCardOne + $dealerCardTwo + $dealerCards);
 
         $data->set('player_cards', $playerCards);
-        $data->set('dealer_cards', $dealerCards);
+        $data->set('dealer_card_one', $dealerCardOne);
+        $data->set('dealer_card_two', $dealerCardTwo);
         $data->set('player_points', $playerPoints);
+        $data->set('dealer_points_start', $dealerPointsStart);
         $data->set('dealer_points', $dealerPoints);
+        $data->set('dealer_cards', $dealerCards);
         $data->set('deck_of_cards', $cards);
-        
+
         $data->save();
     }
 }

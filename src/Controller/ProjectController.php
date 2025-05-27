@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Project\AddCardPlayer;
 use App\Project\Data;
 use App\Project\StartBlackJack;
+use App\Project\Split;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +44,79 @@ class ProjectController extends AbstractController
         }
 
         return $this->render('project/game.html.twig', [
+            'data' => $data->getAll(),
+        ]);
+    }
+
+    #[Route("/add_card", name: "add_card")]
+    public function addCardControll(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+
+        $add = new AddCardPlayer();
+        $add->addCard($data);
+        
+        return $this->render('project/game.html.twig', [
+            'data' => $data->getAll(),
+        ]);
+    }
+
+    #[Route("/stand", name: "stand")]
+    public function stand(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+
+        $data->set('game_started', false);
+        $data->save();
+
+        return $this->render('project/game.html.twig', [
+            'data' => $data->getAll(),
+        ]);
+    }
+
+    #[Route("/split", name: "split")]
+    public function split(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+
+        $split = new Split();
+        $split->addCardSplit($data);
+
+        return $this->render('project/gameSplit.html.twig', [
+            'data' => $data->getAll(),
+        ]);
+    }
+
+    #[Route("/add_split", name: "add_split")]
+    public function addSplit(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+        $add = new AddCardPlayer();
+
+        $add->addCardSplit($data);
+
+        return $this->render('project/gameSplit.html.twig', [
+            'data' => $data->getAll(),
+        ]);
+    }
+
+    #[Route("/stand_split", name: "stand_split")]
+    public function standSplit(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+        $activeHand = $data->get('active_hand');
+
+        if ($activeHand === 'hand1')
+        {
+            $data->set('active_hand', 'hand2');
+        } else {
+            $data->set('active_hand', false);
+            $data->set('game_started', false);
+        }
+        
+        $data->save();
+
+        return $this->render('project/gameSplit.html.twig', [
             'data' => $data->getAll(),
         ]);
     }
