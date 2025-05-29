@@ -21,7 +21,7 @@ class StartBlackJack
         // $playerCards = array_splice($cards, 0, 2);
         $dealerCardOne = array_splice($cards, 0, 1);
         $dealerCardTwo = array_splice($cards, 0, 1);
-        $dealerCards = array_splice($cards, 0, 3);
+        $dealerCards = [];
         
         //fake data
         $playerCards = [
@@ -41,7 +41,7 @@ class StartBlackJack
         $rules = new Rules();
         $playerPoints = $rules->countPoints($playerCards);
         $dealerPointsStart = $rules->countPoints($dealerCardOne);
-        $dealerPoints = $rules->countPoints($dealerCardOne + $dealerCardTwo + $dealerCards);
+        $dealerPoints = $rules->countPoints($dealerCardOne + $dealerCardTwo);
 
         $data->set('player_cards', $playerCards);
         $data->set('dealer_card_one', $dealerCardOne);

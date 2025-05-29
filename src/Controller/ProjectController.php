@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Project\AddCardDealer;
 use App\Project\AddCardPlayer;
 use App\Project\Data;
+use App\Project\DecideWinner;
 use App\Project\StartBlackJack;
 use App\Project\Split;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,6 +57,20 @@ class ProjectController extends AbstractController
 
         $add = new AddCardPlayer();
         $add->addCard($data);
+
+        $game_status = $data->get('game_status');
+        if (!$game_status)
+        {
+            $addDealer = new AddCardDealer();
+            $addDealer->addCardDealer($data);
+
+            $winner = new DecideWinner();
+            $winner->decideWinner($data);
+
+            return $this->render('project/winner.html.twig', [
+                'data' => $data->getAll(),
+            ]);
+        }
         
         return $this->render('project/game.html.twig', [
             'data' => $data->getAll(),
@@ -64,10 +80,28 @@ class ProjectController extends AbstractController
     #[Route("/stand", name: "stand")]
     public function stand(SessionInterface $session): Response
     {
+        $addDealer = new AddCardDealer();
+
         $data = $this->getData($session);
 
         $data->set('game_started', false);
         $data->save();
+
+        $addDealer->addCardDealer($data);
+
+        $game_status = $data->get('game_status');
+        if (!$game_status)
+        {
+            $addDealer = new AddCardDealer();
+            $addDealer->addCardDealer($data);
+
+            $winner = new DecideWinner();
+            $winner->decideWinner($data);
+
+            return $this->render('project/winner.html.twig', [
+                'data' => $data->getAll(),
+            ]);
+        }
 
         return $this->render('project/game.html.twig', [
             'data' => $data->getAll(),
@@ -95,6 +129,15 @@ class ProjectController extends AbstractController
 
         $add->addCardSplit($data);
 
+        if (!$data->get('game_started') || $data->get('active_hand') === false) {
+            $winner = new DecideWinner();
+            $winner->decideWinnerSplit($data);
+    
+            return $this->render('project/winner_split.html.twig', [
+                'data' => $data->getAll(),
+            ]);
+        }
+
         return $this->render('project/gameSplit.html.twig', [
             'data' => $data->getAll(),
         ]);
@@ -106,18 +149,39 @@ class ProjectController extends AbstractController
         $data = $this->getData($session);
         $activeHand = $data->get('active_hand');
 
-        if ($activeHand === 'hand1')
-        {
+        if ($activeHand === 'hand1') {
             $data->set('active_hand', 'hand2');
         } else {
             $data->set('active_hand', false);
             $data->set('game_started', false);
+        
+            $addDealer = new AddCardDealer();
+            $addDealer->addCardDealer($data);
+        
+            $winner = new DecideWinner();
+            $winner->decideWinnerSplit($data);
+        
+            return $this->render('project/winner_split.html.twig', [
+                'data' => $data->getAll(),
+            ]);
         }
         
         $data->save();
-
+        
         return $this->render('project/gameSplit.html.twig', [
             'data' => $data->getAll(),
         ]);
+    }
+
+    #[Route("/reset", name: "reset")]
+    public function reset(SessionInterface $session): Response
+    {
+        $data = $this->getData($session);
+
+        $data->reset();
+
+        $data->save();
+
+        return $this->redirectToRoute('proj_main');
     }
 }

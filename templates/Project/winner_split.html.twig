@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Game Over{% endblock %}
+
+{% block body %}
+<h1>Game Over</h1>
+
+<h2>Dealer</h2>
+<p>Points: {{ data.dealer_points }}</p>
+<ul>
+    {% for card in data.dealer_card_one %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+    {% for card in data.dealer_card_two %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+    {% for card in data.dealer_cards %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Player</h2>
+<ul>
+    {% for result in data.results %}
+        <li>{{ result }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Hand 1</h2>
+<ul>
+    {% for card in data.hand1 %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+<p>Points hand 1: {{ data.hand1Points }}</p>
+
+<h2>Hand 2</h2>
+<ul>
+    {% for card in data.hand2 %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+</ul>
+<p>Points hand 2: {{ data.hand2Points }}</p>
+
+<a href="{{ path('reset') }}">
+    <button>Spela igen</button>
+</a>
+{% endblock %}
