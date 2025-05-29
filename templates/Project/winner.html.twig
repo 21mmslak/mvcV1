@@ -1,36 +1,35 @@
-{% extends "base.html.twig" %}
+{% extends "projectBase.html.twig" %}
 
 {% block title %}Game Over{% endblock %}
 
 {% block body %}
 <h1>Game Over</h1>
 
-<h2>{{ data.result }}</h2>
-
 <h3>Dealer</h3>
 <p>Points: {{ data.dealer_points }}</p>
 <ul>
-        {% for card in data.dealer_card_one %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-        {% for card in data.dealer_card_two %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-        {% for card in data.dealer_cards %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-    </ul>
-    <p>Points: {{ data.dealer_points }}</p>
-
-
-<h3>Player</h3>
-<p>Points: {{ data.player_points }}</p>
-<ul>
-    {% for card in data.player_cards %}
+    {% for card in data.dealer_card_one %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+    {% for card in data.dealer_card_two %}
+        <li>{{ card.card|raw }}</li>
+    {% endfor %}
+    {% for card in data.dealer_cards %}
         <li>{{ card.card|raw }}</li>
     {% endfor %}
 </ul>
-<p>Points: {{ data.player_points }}</p>
+
+<h3>Players</h3>
+{% for name, player in data.players %}
+    <h4>{{ name|capitalize }}</h4>
+    <ul>
+        {% for card in player.cards %}
+            <li>{{ card.card|raw }}</li>
+        {% endfor %}
+    </ul>
+    <p>Points: {{ player.points }}</p>
+    <p>Result: {{ player.result|default('Still playing') }}</p>
+{% endfor %}
 
 <a href="{{ path('reset') }}">
     <button>Spela igen</button>

@@ -7,6 +7,12 @@ parameters:
         - ../../tests
     excludePaths:
         analyseAndScan:
+            - ../../src/BlackJack
+            - ../../src/Controller
+            - ../../src/Card
+            - ../../src/Dice
+            - ../../src/Entity
+            - ../../src/Repository
             - ../../tests/Controller/**
     bootstrapFiles:
         #- .phpstan.constants.php

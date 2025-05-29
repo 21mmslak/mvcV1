@@ -7,31 +7,36 @@ class DecideWinner
     public function decideWinner(Data $data): void
     {
         $game = $data->get('game_started');
-        if ($game) {
-            return;
-        }
+        if ($game) return;
 
         $dealerPoints = $data->get('dealer_points');
-        $playerPoints = $data->get('player_points');
         $coins = $data->get('coins');
+        $players = $data->get('players');
 
-        if ($playerPoints > 21) {
-            $coins -= 10;
-            $data->set('result', 'Dealer Win! Player busts.');
-        } elseif ($dealerPoints > 21) {
-            $coins += 10;
-            $data->set('result', 'Player wins! Dealer busts.');
-        } elseif ($playerPoints > $dealerPoints) {
-            $coins += 10;
-            $data->set('result', 'Player wins with higher points!');
-        } elseif ($dealerPoints > $playerPoints) {
-            $coins -= 10;
-            $data->set('result', 'Dealer wins with higher points!');
-        } else {
-            $data->set('result', 'Draw! Nobody wins.');
+        foreach ($players as $name => &$player) {
+            foreach ($player['hands'] as $handName => &$hand) {
+                $playerPoints = $hand['points'];
+
+                if ($playerPoints > 21) {
+                    $coins -= 10;
+                    $hand['result'] = "Dealer wins against {$name} {$handName} (player busts)";
+                } elseif ($dealerPoints > 21) {
+                    $coins += 10;
+                    $hand['result'] = "{$name} {$handName} wins! Dealer busts.";
+                } elseif ($playerPoints > $dealerPoints) {
+                    $coins += 10;
+                    $hand['result'] = "{$name} {$handName} wins with higher points!";
+                } elseif ($dealerPoints > $playerPoints) {
+                    $coins -= 10;
+                    $hand['result'] = "Dealer wins against {$name} {$handName}";
+                } else {
+                    $hand['result'] = "{$name} {$handName} and dealer draw.";
+                }
+            }
         }
 
         $data->set('coins', $coins);
+        $data->set('players', $players);
         $data->save();
     }
 
