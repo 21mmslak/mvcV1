@@ -4,6 +4,42 @@ namespace App\Project;
 
 class DecideWinner
 {
+    // public function decideWinner(Data $data): void
+    // {
+    //     $game = $data->get('game_started');
+    //     if ($game) return;
+
+    //     $dealerPoints = $data->get('dealer_points');
+    //     $coins = $data->get('coins');
+    //     $players = $data->get('players');
+
+    //     foreach ($players as $name => &$player) {
+    //         foreach ($player['hands'] as $handName => &$hand) {
+    //             $playerPoints = $hand['points'];
+
+    //             if ($playerPoints > 21) {
+    //                 $coins -= 10;
+    //                 $hand['result'] = "Dealer wins against {$name} {$handName} (player busts)";
+    //             } elseif ($dealerPoints > 21) {
+    //                 $coins += 10;
+    //                 $hand['result'] = "{$name} {$handName} wins! Dealer busts.";
+    //             } elseif ($playerPoints > $dealerPoints) {
+    //                 $coins += 10;
+    //                 $hand['result'] = "{$name} {$handName} wins with higher points!";
+    //             } elseif ($dealerPoints > $playerPoints) {
+    //                 $coins -= 10;
+    //                 $hand['result'] = "Dealer wins against {$name} {$handName}";
+    //             } else {
+    //                 $hand['result'] = "{$name} {$handName} and dealer draw.";
+    //             }
+    //         }
+    //     }
+
+    //     $data->set('coins', $coins);
+    //     $data->set('players', $players);
+    //     $data->save();
+    // }
+
     public function decideWinner(Data $data): void
     {
         $game = $data->get('game_started');
@@ -16,18 +52,19 @@ class DecideWinner
         foreach ($players as $name => &$player) {
             foreach ($player['hands'] as $handName => &$hand) {
                 $playerPoints = $hand['points'];
+                $bet = $hand['bet'] ?? 10;
 
                 if ($playerPoints > 21) {
-                    $coins -= 10;
-                    $hand['result'] = "Dealer wins against {$name} {$handName} (player busts)";
+                    $coins -= $bet;
+                    $hand['result'] = "Dealer wins against {$name} {$handName} (bust)";
                 } elseif ($dealerPoints > 21) {
-                    $coins += 10;
+                    $coins += $bet;
                     $hand['result'] = "{$name} {$handName} wins! Dealer busts.";
                 } elseif ($playerPoints > $dealerPoints) {
-                    $coins += 10;
+                    $coins += $bet;
                     $hand['result'] = "{$name} {$handName} wins with higher points!";
                 } elseif ($dealerPoints > $playerPoints) {
-                    $coins -= 10;
+                    $coins -= $bet;
                     $hand['result'] = "Dealer wins against {$name} {$handName}";
                 } else {
                     $hand['result'] = "{$name} {$handName} and dealer draw.";

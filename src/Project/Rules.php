@@ -42,24 +42,38 @@ class Rules
         return $points;
     }
 
-    public function decideWinner(int $dealer, int $player, SessionInterface $session): string
+    public function decideWinner(Data $data): void
     {
-        $coins = $this->getIntFromSession($session, "coins");
+        $game = $data->get('game_started');
+        if ($game) return;
 
-        if ($player > 21) {
-            $coins -= 10;
-            $session->set("coins", $coins);
-            return "Dealer Win! Player lose :(";
-        } elseif ($dealer > 21 || $player > $dealer) {
-            $coins += 10;
-            $session->set("coins", $coins);
-            return "Player Win! Dealer lose :)";
-        } elseif ($dealer > $player) {
-            $coins -= 10;
-            $session->set("coins", $coins);
-            return "Dealer Win! Player lose :(";
+        $dealerPoints = $data->get('dealer_points');
+        $coins = $data->get('coins');
+        $players = $data->get('players');
+
+        foreach ($players as $name => &$player) {
+            foreach ($player['hands'] as $handName => &$hand) {
+                $playerPoints = $hand['points'];
+                $bet = $hand['bet'] ?? 10;
+
+                if ($playerPoints > 21) {
+                    $coins -= $bet;
+                    $hand['result'] = "Dealer wins against {$handName} (bust)";
+                } elseif ($dealerPoints > 21 || $playerPoints > $dealerPoints) {
+                    $coins += $bet;
+                    $hand['result'] = "{$handName} wins against dealer!";
+                } elseif ($dealerPoints > $playerPoints) {
+                    $coins -= $bet;
+                    $hand['result'] = "Dealer wins against {$handName}.";
+                } else {
+                    $hand['result'] = "Draw with {$handName}.";
+                }
+            }
         }
-        return "Draw! Nobody wins.";
+
+        $data->set('coins', $coins);
+        $data->set('players', $players);
+        $data->save();
     }
 
     public function checkOver(int $points): bool

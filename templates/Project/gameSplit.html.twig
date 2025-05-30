@@ -5,8 +5,44 @@
 {% block body %}
 <h1>Black Jack</h1>
 
-<h2>Dealer</h2>
-{% if data.game_started %}
+{% set allBetsSet = true %}
+{% for player in data.players %}
+    {% for hand in player.hands %}
+        {% if hand.bet is not defined or hand.bet is null %}
+            {% set allBetsSet = false %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{% if not allBetsSet %}
+    <form action="{{ path('set_all_bets') }}" method="post">
+        <h2>Place Bets</h2>
+        {% for playerName, player in data.players %}
+            <h3>{{ playerName|capitalize }}</h3>
+            {% for handName, hand in player.hands %}
+                <label>Bet for {{ playerName }} {{ handName }} (Maxbet: {{ data.coins // data.players|length }}):</label>
+                <input type="number" name="bets[{{ playerName }}][{{ handName }}]" min="100" max="{{ data.coins // data.players|length }}" required><br>
+            {% endfor %}
+        {% endfor %}
+        <button type="submit">Set All Bets</button>
+    </form>
+    <p>Cards will be revealed after all bets are placed.</p>
+
+    {% if data.players|length < 3 %}
+        <a href="{{ path('add_hand') }}">
+            <button type="button">Lägg till ny spelare</button>
+        </a>
+    {% endif %}
+    {% if data.players|length > 1  %}
+    {% set lastPlayer = data.players|keys|last %}
+        <a href="{{ path('remove_hand', {'name': lastPlayer}) }}">
+            <button type="button">Ta bort senaste spelare ({{ lastPlayer|capitalize }})</button>
+        </a>
+    {% endif %}
+{% endif %}
+
+{% if allBetsSet %}
+    <h2>Dealer</h2>
     <ul>
         {% for card in data.dealer_card_one %}
             <li>{{ card.card|raw }}</li>
@@ -14,62 +50,31 @@
         <li>?</li>
     </ul>
     <p>Points: {{ data.dealer_points_start }}</p>
-{% else %}
-    <ul>
-        {% for card in data.dealer_card_one %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-        {% for card in data.dealer_card_two %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-        {% for card in data.dealer_cards %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-    </ul>
-    <p>Points: {{ data.dealer_points }}</p>
-{% endif %}
 
-<h2>Players</h2>
-{% for playerName, player in data.players %}
-    <h3>{{ playerName|capitalize }}</h3>
-    {% for handName, hand in player.hands %}
-        <h4>{{ handName|capitalize }}</h4>
-        <ul>
-            {% for card in hand.cards %}
-                <li>{{ card.card|raw }}</li>
-            {% endfor %}
-        </ul>
-        <p>Points: {{ hand.points }}</p>
-        <p>Status: {{ hand.status|default('active') }}</p>
+    {% for playerName, player in data.players %}
+        <h3>{{ playerName|capitalize }}</h3>
+        {% for handName, hand in player.hands %}
+            <h4>{{ handName|capitalize }}</h4>
+            <p>Bet: {{ hand.bet }}</p>
+            <ul>
+                {% for card in hand.cards %}
+                    <li>{{ card.card|raw }}</li>
+                {% endfor %}
+            </ul>
+            <p>Points: {{ hand.points }}</p>
 
-        {% if data.active_player == playerName and data.active_hand == handName and hand.status == 'active' %}
-            <a href="{{ path('add_card', {'player': playerName, 'hand': handName}) }}"><button>Hit</button></a>
-            <a href="{{ path('stand', {'player': playerName, 'hand': handName}) }}"><button>Stand</button></a>
-
-            <a href="{{ path('split', {'player': playerName, 'hand': handName}) }}">
-                <button 
-                    {% if hand.cards|length != 2 or hand.cards[0].value != hand.cards[1].value %}
-                        disabled
-                    {% endif %}>
-                    Split
-                </button>
-            </a>
-        {% endif %}
+            {% if data.active_player == playerName and data.active_hand == handName and hand.status == 'active' %}
+                <a href="{{ path('add_card', {'player': playerName, 'hand': handName}) }}"><button>Hit</button></a>
+                <a href="{{ path('stand', {'player': playerName, 'hand': handName}) }}"><button>Stand</button></a>
+                <a href="{{ path('split', {'player': playerName, 'hand': handName}) }}">
+                    <button {% if hand.cards|length != 2 or hand.cards[0].value != hand.cards[1].value %}disabled{% endif %}>Split</button>
+                </a>
+            {% endif %}
+        {% endfor %}
     {% endfor %}
-{% endfor %}
-
-{% if data.players|length < 3 %}
-    <a href="{{ path('add_hand') }}">
-        <button type="button">Lägg till ny spelare</button>
-    </a>
 {% endif %}
 
-{% if data.players|length > 1 %}
-    {% set lastPlayer = data.players|keys|last %}
-    <a href="{{ path('remove_hand', {'name': lastPlayer}) }}">
-        <button type="button">Ta bort senaste spelare ({{ lastPlayer|capitalize }})</button>
-    </a>
-{% endif %}
+
 
 <p>Coins: {{ data.coins }}</p>
 <a href="{{ path('reset') }}"><button>Reset</button></a>

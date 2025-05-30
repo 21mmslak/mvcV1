@@ -19,43 +19,46 @@ class AddCardPlayer
             $players[$player]['hands'][$hand]['cards'][] = $addedCard[0];
             $players[$player]['hands'][$hand]['points'] = $rules->countPoints($players[$player]['hands'][$hand]['cards']);
     
-            if ($players[$player]['hands'][$hand]['points'] > 21) {
-                $players[$player]['hands'][$hand]['status'] = 'bust';
-
-                $allDone = true;
-                foreach ($players as $pData) {
-                    foreach ($pData['hands'] as $hData) {
-                        if (($hData['status'] ?? '') == 'active') {
-                            $allDone = false;
-                            break 2;
-                        }
-                    }
-                }
-    
-                $data->set('deck_of_cards', $cards);
-                $data->set('players', $players);
-                $data->save();
-    
-                if ($allDone) {
-                    $data->set('game_started', false);
-                    $data->set('active_player', null);
-                    $data->set('active_hand', null);
-    
-                    $addDealer = new AddCardDealer();
-                    $addDealer->addCardDealer($data);
-    
-                    $winner = new DecideWinner();
-                    $winner->decideWinner($data);
-    
-                    $data->set('game_over', true);
-                    $data->save();
-                    return true;
-                }
-            }
-    
             $data->set('deck_of_cards', $cards);
             $data->set('players', $players);
             $data->save();
+    
+            if ($players[$player]['hands'][$hand]['points'] > 21) {
+                $players[$player]['hands'][$hand]['status'] = 'bust';
+
+                // $nextFound = false;
+                $playerNames = array_keys($players);
+                $currentPlayerIndex = array_search($player, $playerNames);
+    
+                for ($i = $currentPlayerIndex; $i < count($playerNames); $i++) {
+                    $currentPlayer = $playerNames[$i];
+                    $hands = array_keys($players[$currentPlayer]['hands']);
+                    $startHandIndex = ($i == $currentPlayerIndex) ? array_search($hand, $hands) + 1 : 0;
+    
+                    for ($j = $startHandIndex; $j < count($hands); $j++) {
+                        if (($players[$currentPlayer]['hands'][$hands[$j]]['status'] ?? '') === 'active') {
+                            $data->set('active_player', $currentPlayer);
+                            $data->set('active_hand', $hands[$j]);
+                            $data->save();
+                            return false;
+                        }
+                    }
+                }
+
+                $data->set('game_started', false);
+                $data->set('active_player', null);
+                $data->set('active_hand', null);
+    
+                $addDealer = new AddCardDealer();
+                $addDealer->addCardDealer($data);
+    
+                $winner = new DecideWinner();
+                $winner->decideWinner($data);
+    
+                $data->set('game_over', true);
+                $data->save();
+                return true;
+            }
         }
     
         return false;

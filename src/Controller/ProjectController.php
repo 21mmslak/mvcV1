@@ -11,6 +11,7 @@ use App\Project\StartBlackJack;
 use App\Project\Split;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -98,8 +99,7 @@ class ProjectController extends AbstractController
         $players = $data->get('players', []);
     
         $players[$player]['hands'][$hand]['status'] = 'stand';
-    
-        // 🔥 Leta efter nästa hand som är "active"
+
         $foundNext = false;
         $playerNames = array_keys($players);
         $currentPlayerIndex = array_search($player, $playerNames);
@@ -121,7 +121,6 @@ class ProjectController extends AbstractController
         }
     
         if (!$foundNext) {
-            // Alla händer/spelare klara, låt dealern spela
             $data->set('active_player', null);
             $data->set('active_hand', null);
             $data->set('game_started', false);
@@ -357,7 +356,55 @@ class ProjectController extends AbstractController
     }
 
 
+    #[Route("/set_bet/{player}/{hand}", name: "set_bet", methods: ["POST"])]
+    public function setBet(SessionInterface $session, Request $request, string $player, string $hand): Response
+    {
+        $data = $this->getData($session);
+        $players = $data->get('players', []);
+        $bet = (int) $request->request->get('bet');
+    
+        $players[$player]['hands'][$hand]['bet'] = $bet;
+    
+        $data->set('players', $players);
+        $data->save();
+    
+        return $this->redirectToRoute('proj_main');
+    }
 
+
+    #[Route("/set_all_bets", name: "set_all_bets", methods: ["POST"])]
+    public function setAllBets(SessionInterface $session, Request $request): Response
+    {
+        $data = $this->getData($session);
+        $players = $data->get('players', []);
+
+        $bets = $request->request->all()['bets'] ?? [];
+
+        foreach ($bets as $playerName => $playerBets) {
+            foreach ($playerBets as $handName => $bet) {
+                $players[$playerName]['hands'][$handName]['bet'] = (int) $bet;
+                $players[$playerName]['hands'][$handName]['status'] = 'active';
+            }
+        }
+
+        $deck = $data->get('deck_of_cards', []);
+        $rules = new Rules();
+
+        foreach ($players as $playerName => &$player) {
+            foreach ($player['hands'] as &$hand) {
+                if (empty($hand['cards'])) {
+                    $hand['cards'] = array_splice($deck, 0, 2);
+                    $hand['points'] = $rules->countPoints($hand['cards']);
+                }
+            }
+        }
+
+        $data->set('deck_of_cards', $deck);
+        $data->set('players', $players);
+        $data->save();
+
+        return $this->redirectToRoute('proj_main');
+    }
 
     #[Route("/reset", name: "reset")]
     public function reset(SessionInterface $session): Response
