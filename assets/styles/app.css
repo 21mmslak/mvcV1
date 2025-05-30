@@ -75,12 +75,12 @@ ul a:hover {
     color: #ffd700;
 }
 
-h1 {
+h2, h1 {
     border-bottom: 4px double #0022ff;
 }
 
-h2 {
-    border-bottom: 4px double #0022ff;
+h3, h4 {
+    border-bottom: 2px double #0022ff;
 }
 
 input {

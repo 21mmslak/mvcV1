@@ -1,0 +1,29 @@
+{% extends 'projectBase.html.twig' %}
+
+{% block title %}Global Scoreboard{% endblock %}
+
+{% block body %}
+<h1>Global Scoreboard</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Coins</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in scoreboards %}
+            <tr>
+                <td>{{ score.user.username }}</td>
+                <td>{{ score.coins }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">No entries in the scoreboard yet.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

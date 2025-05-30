@@ -21,7 +21,14 @@
         <nav>
                 <ul>
                     <li><a href="{{ path('home') }}">Tillbka</a></li>
+                    <li><a href="{{ path('proj') }}">Black Jack</a></li>
+                    <li><a href="{{ path('scoreboard') }}">Scoreboard</a></li>
                     <li><a href="{{ path('session') }}">Session</a></li>
+                    {% if app.user %}
+                        <li><a href="{{ path('app_logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login') }}">Log in</a></li>
+                    {% endif %}
                 </ul>
             </nav>
             <header class="site-header" style="background-image: url({{ asset('img/landskap.jpg') }})">

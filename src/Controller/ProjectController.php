@@ -9,24 +9,44 @@ use App\Project\DecideWinner;
 use App\Project\Rules;
 use App\Project\StartBlackJack;
 use App\Project\Split;
+use App\Entity\Scoreboard;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 
 class ProjectController extends AbstractController
 {
-    // private Data $data;
+    private Security $security;
+    private EntityManagerInterface $em;
+    private DecideWinner $decideWinner;
 
-    // public function __construct(Data $data)
-    // {
-    //     $this->data = $data;
-    // }
+    public function __construct(Security $security, EntityManagerInterface $em, DecideWinner $decideWinner)
+    {
+        $this->security = $security;
+        $this->em = $em;
+        $this->decideWinner = $decideWinner;
+    }
 
     private function getData(SessionInterface $session): Data
     {
-        return new Data($session);
+        $data = new Data($session);
+    
+        $user = $this->security->getUser();
+        if ($user && $user instanceof User) {
+            $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
+            if ($scoreboard) {
+                $data->set('coins', $scoreboard->getCoins());
+            } else {
+                $data->set('coins', 5000);
+            }
+        }
+    
+        return $data;
     }
 
     #[Route("/proj", name: "proj")]
@@ -42,7 +62,7 @@ class ProjectController extends AbstractController
         
         if (!$data->get('game_started'))
         {
-            $start = new StartBlackJack();
+            $start = new StartBlackJack($this->security, $this->em);
             $start->start($data);
         }
 
@@ -98,8 +118,7 @@ class ProjectController extends AbstractController
         $players = $data->get('players', []);
     
         $players[$player]['hands'][$hand]['status'] = 'stand';
-    
-        // 🔥 Leta efter nästa hand som är "active"
+
         $foundNext = false;
         $playerNames = array_keys($players);
         $currentPlayerIndex = array_search($player, $playerNames);
@@ -121,7 +140,6 @@ class ProjectController extends AbstractController
         }
     
         if (!$foundNext) {
-            // Alla händer/spelare klara, låt dealern spela
             $data->set('active_player', null);
             $data->set('active_hand', null);
             $data->set('game_started', false);
@@ -129,8 +147,7 @@ class ProjectController extends AbstractController
             $dealer = new AddCardDealer();
             $dealer->addCardDealer($data);
     
-            $winner = new DecideWinner();
-            $winner->decideWinner($data);
+            $this->decideWinner->decideWinner($data);
     
             $data->save();
     
@@ -218,35 +235,47 @@ class ProjectController extends AbstractController
     //     ]);
     // }
 
-    #[Route("/stand_split", name: "stand_split")]
-    public function standSplit(SessionInterface $session): Response
-    {
-        $data = $this->getData($session);
-        $activeHand = $data->get('active_hand');
 
-        if ($activeHand === 'hand1') {
-            $data->set('active_hand', 'hand2');
-        } else {
-            $data->set('active_hand', false);
-            $data->set('game_started', false);
+
+
+
+
+    // #[Route("/stand_split", name: "stand_split")]
+    // public function standSplit(SessionInterface $session): Response
+    // {
+    //     $data = $this->getData($session);
+    //     $activeHand = $data->get('active_hand');
+
+    //     if ($activeHand === 'hand1') {
+    //         $data->set('active_hand', 'hand2');
+    //     } else {
+    //         $data->set('active_hand', false);
+    //         $data->set('game_started', false);
         
-            $addDealer = new AddCardDealer();
-            $addDealer->addCardDealer($data);
+    //         $addDealer = new AddCardDealer();
+    //         $addDealer->addCardDealer($data);
         
-            $winner = new DecideWinner();
-            $winner->decideWinnerSplit($data);
+    //         $winner = new DecideWinner();
+    //         $winner->decideWinnerSplit($data);
         
-            return $this->render('project/winner_split.html.twig', [
-                'data' => $data->getAll(),
-            ]);
-        }
+    //         return $this->render('project/winner_split.html.twig', [
+    //             'data' => $data->getAll(),
+    //         ]);
+    //     }
         
-        $data->save();
+    //     $data->save();
         
-        return $this->render('project/gameSplit.html.twig', [
-            'data' => $data->getAll(),
-        ]);
-    }
+    //     return $this->render('project/gameSplit.html.twig', [
+    //         'data' => $data->getAll(),
+    //     ]);
+    // }
+
+
+
+
+
+
+
 
     // #[Route("/add_hand", name: "add_hand")]
     // public function addHand(SessionInterface $session): Response
@@ -343,8 +372,8 @@ class ProjectController extends AbstractController
     public function addCard(SessionInterface $session, string $player, string $hand): Response
     {
         $data = $this->getData($session);
-        $addCardPlayer = new AddCardPlayer();
-    
+        $addCardPlayer = new AddCardPlayer($this->em, $this->security, $this->decideWinner);
+
         $gameOver = $addCardPlayer->addCard($data, $player, $hand);
     
         if ($gameOver) {
@@ -356,8 +385,55 @@ class ProjectController extends AbstractController
         return $this->redirectToRoute('proj_main');
     }
 
+    #[Route("/set_bet/{player}/{hand}", name: "set_bet", methods: ["POST"])]
+    public function setBet(SessionInterface $session, Request $request, string $player, string $hand): Response
+    {
+        $data = $this->getData($session);
+        $players = $data->get('players', []);
+        $bet = (int) $request->request->get('bet');
+    
+        $players[$player]['hands'][$hand]['bet'] = $bet;
+    
+        $data->set('players', $players);
+        $data->save();
+    
+        return $this->redirectToRoute('proj_main');
+    }
 
 
+    #[Route("/set_all_bets", name: "set_all_bets", methods: ["POST"])]
+    public function setAllBets(SessionInterface $session, Request $request): Response
+    {
+        $data = $this->getData($session);
+        $players = $data->get('players', []);
+
+        $bets = $request->request->all()['bets'] ?? [];
+
+        foreach ($bets as $playerName => $playerBets) {
+            foreach ($playerBets as $handName => $bet) {
+                $players[$playerName]['hands'][$handName]['bet'] = (int) $bet;
+                $players[$playerName]['hands'][$handName]['status'] = 'active';
+            }
+        }
+
+        $deck = $data->get('deck_of_cards', []);
+        $rules = new Rules();
+
+        foreach ($players as $playerName => &$player) {
+            foreach ($player['hands'] as &$hand) {
+                if (empty($hand['cards'])) {
+                    $hand['cards'] = array_splice($deck, 0, 2);
+                    $hand['points'] = $rules->countPoints($hand['cards']);
+                }
+            }
+        }
+
+        $data->set('deck_of_cards', $deck);
+        $data->set('players', $players);
+        $data->save();
+
+        return $this->redirectToRoute('proj_main');
+    }
 
     #[Route("/reset", name: "reset")]
     public function reset(SessionInterface $session): Response

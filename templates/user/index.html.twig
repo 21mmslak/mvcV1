@@ -1,0 +1,26 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+<h1>Log in</h1>
+
+<form action="{{ path('app_login') }}" method="post">
+    <label for="_username">Username:</label>
+    <input type="text" id="_username" name="_username" value="{{ last_username|default('') }}" required>
+
+    <label for="_password">Password:</label>
+    <input type="password" id="_password" name="_password" required>
+
+    <button type="submit">Login</button>
+
+    {% if error is defined and error %}
+        <p style="color:red">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+    {% endif %}
+</form>
+
+<a href="{{ path('register') }}">
+    <button>Register</button>
+</a>
+
+{% endblock %}

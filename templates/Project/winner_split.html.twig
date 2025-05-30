@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "projectBase.html.twig" %}
 
 {% block title %}Game Over{% endblock %}
 
@@ -30,11 +30,18 @@
             {% endfor %}
         </ul>
         <p>Points: {{ hand.points }}</p>
+        <p>Bet: {{ hand.bet|default('10') }}</p>
         <p>Result: {{ hand.result|default('No result') }}</p>
     {% endfor %}
 {% endfor %}
 
+{% if app.user and app.user.scoreboards|length > 0 %}
+    <p>Your Coins: {{ app.user.scoreboards.first.coins }}</p>
+{% else %}
+    <p>Coins: {{ data.coins }}</p>
+{% endif %}
+
 <a href="{{ path('reset') }}">
-    <button>Spela igen</button>
+    <button>Play Again</button>
 </a>
 {% endblock %}
