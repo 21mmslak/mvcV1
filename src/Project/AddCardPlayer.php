@@ -31,11 +31,13 @@ class AddCardPlayer
         $addedCard = array_splice($cards, 0, 1);
         $players[$player]['hands'][$hand]['cards'][] = $addedCard[0];
         $players[$player]['hands'][$hand]['points'] = $rules->countPoints($players[$player]['hands'][$hand]['cards']);
-    
+
         if ($players[$player]['hands'][$hand]['points'] > 21) {
             $players[$player]['hands'][$hand]['status'] = 'bust';
         } elseif ($isDouble) {
             $players[$player]['hands'][$hand]['status'] = 'stand';
+        } else {
+            $players[$player]['hands'][$hand]['status'] = 'active';
         }
     
         $data->set('deck_of_cards', $cards);
@@ -48,21 +50,17 @@ class AddCardPlayer
     public function activateNext(Data $data, string $currentPlayer, string $currentHand): bool
     {
         $players = $data->get('players', []);
-        $playerNames = array_keys($players);
         $foundCurrent = false;
     
-        foreach ($playerNames as $playerName) {
-            $handNames = array_keys($players[$playerName]['hands']);
-            foreach ($handNames as $handName) {
+        foreach ($players as $playerName => $player) {
+            foreach ($player['hands'] as $handName => $hand) {
                 if (!$foundCurrent) {
                     if ($playerName === $currentPlayer && $handName === $currentHand) {
                         $foundCurrent = true;
                     }
                     continue;
                 }
-    
-                $status = $players[$playerName]['hands'][$handName]['status'] ?? '';
-                if ($status !== 'stand' && $status !== 'bust') {
+                if ($hand['status'] === 'waiting') {
                     $players[$playerName]['hands'][$handName]['status'] = 'active';
                     $data->set('players', $players);
                     $data->set('active_player', $playerName);
@@ -77,5 +75,11 @@ class AddCardPlayer
         $data->set('active_hand', null);
         $data->save();
         return false;
+    }
+
+    public function checkAndHandleGameOver(Data $data, string $player, string $hand): bool
+    {
+        $hasNext = $this->activateNext($data, $player, $hand);
+        return !$hasNext;
     }
 }

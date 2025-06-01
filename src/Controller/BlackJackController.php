@@ -207,8 +207,8 @@ class BlackJackController extends AbstractController
         );
     }
 
-    #[Route('/split', name: 'split')]
-    public function split(SessionInterface $session): Response
+    #[Route('/split', name: 'splitat')]
+    public function splitat(SessionInterface $session): Response
     {
         $result = $this->gameManager->split($session);
 

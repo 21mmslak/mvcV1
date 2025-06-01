@@ -1,0 +1,26 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}API{% endblock %}
+
+{% block body %}
+<h1>API</h1>
+
+<form action="{{ path('next_card') }}" method="get">
+    <button type="submit">Se next card</button>
+</form>
+
+<form action="{{ path('scoreboard_api') }}" method="get">
+    <button type="submit">Se scoreboard</button>
+</form>
+
+<form action="{{ path('user_coins_api', {'username': 'Test'}) }}" method="get">
+    <button type="submit">Se coins for user (Test std)</button>
+</form>
+
+<form action="{{ path('player_cards') }}" method="get">
+    <button type="submit">Se player cards</button>
+</form>
+<form action="{{ path('start_game_api') }}" method="post">
+    <button type="submit">Start game</button>
+</form>
+{% endblock %}
