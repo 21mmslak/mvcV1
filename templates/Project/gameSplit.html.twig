@@ -66,6 +66,28 @@
             {% if data.active_player == playerName and data.active_hand == handName and hand.status == 'active' %}
                 <a href="{{ path('add_card', {'player': playerName, 'hand': handName}) }}"><button>Hit</button></a>
                 <a href="{{ path('stand', {'player': playerName, 'hand': handName}) }}"><button>Stand</button></a>
+
+                {% set totalBets = 0 %}
+                {% for p in data.players %}
+                    {% for h in p.hands %}
+                        {% set totalBets = totalBets + (h.bet ?? 0) %}
+                    {% endfor %}
+                {% endfor %}
+
+                {% set requiredCoins = totalBets + (hand.bet) %}
+                {% set extraBet = hand.bet %}
+                {% set finalRequiredCoins = requiredCoins + extraBet %}
+
+                {% if hand.cards|length == 2 and data.coins >= finalRequiredCoins %}
+                    <a href="{{ path('dubbel_add', {'player': playerName, 'hand': handName}) }}">
+                        <button>Dubbel</button>
+                    </a>
+                {% else %}
+                    <a href="#" class="disabled">
+                        <button disabled>Dubbel</button>
+                    </a>
+                {% endif %}
+
                 <a href="{{ path('split', {'player': playerName, 'hand': handName}) }}">
                     <button {% if hand.cards|length != 2 or hand.cards[0].value != hand.cards[1].value %}disabled{% endif %}>Split</button>
                 </a>

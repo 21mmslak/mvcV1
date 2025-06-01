@@ -2,12 +2,10 @@
 
 namespace App\Project;
 
-use App\Project\StartDeck;
-use App\Project\Rules;
 use App\Entity\Scoreboard;
+use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\User;
 
 class StartBlackJack
 {
@@ -19,43 +17,72 @@ class StartBlackJack
         $this->security = $security;
         $this->em = $em;
     }
+
     public function start(Data $data): void
     {
-        $user = $this->security->getUser();
+        $coins = $this->initializePlayerCoins($data);
+        $data->set('coins', $coins);
+        $data->set('game_started', true);
 
-        if ($user && $user instanceof User) {
-            $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
+        $deck = (new StartDeck())->startGame();
+        $dealerCards = $this->initializeDealer($deck);
+        $players = $this->initializePlayers($data);
+
+        $rules = new Rules();
+        $dealerPointsStart = $rules->countPoints([$dealerCards['card_one']]);
+        $dealerPoints = $rules->countPoints([$dealerCards['card_one'], $dealerCards['card_two']]);
+
+        $data->set('players', $players);
+        $data->set('active_player', 'player1');
+        $data->set('active_hand', 'hand1');
+        $data->set('dealer_card_one', [$dealerCards['card_one']]);
+        $data->set('dealer_card_two', [$dealerCards['card_two']]);
+        $data->set('dealer_points_start', $dealerPointsStart);
+        $data->set('dealer_points', $dealerPoints);
+        $data->set('dealer_cards', []);
+        $data->set('deck_of_cards', $dealerCards['remaining_deck']);
+
+        $data->save();
+    }
+
+    private function initializePlayerCoins(Data $data): int
+    {
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $repo = $this->em->getRepository(Scoreboard::class);
+            $scoreboard = $repo->findOneBy(['user' => $user]);
 
             if (!$scoreboard) {
                 $scoreboard = new Scoreboard();
-                $scoreboard->setUser($user);
-                $scoreboard->setCoins(5000);
+                $scoreboard->setUser($user)->setCoins(5000);
                 $this->em->persist($scoreboard);
                 $this->em->flush();
             }
 
-            $data->set('coins', $scoreboard->getCoins());
-        } else {
-            if ($data->get('coins') === null) {
-                $data->set('coins', 5000);
-            }
+            return $scoreboard->getCoins();
         }
 
-        $data->set('game_started', true);
+        return $data->get('coins') ?? 5000;
+    }
 
-        $deck = new StartDeck();
-        $cards = $deck->startGame();
+    private function initializeDealer(array $deck): array
+    {
+        $cardOne = array_shift($deck);
+        $cardTwo = array_shift($deck);
+        return [
+            'card_one' => $cardOne,
+            'card_two' => $cardTwo,
+            'remaining_deck' => $deck,
+        ];
+    }
 
-        $dealerCardOne = array_splice($cards, 0, 1);
-        $dealerCardTwo = array_splice($cards, 0, 1);
-        $dealerCards = [];
-
+    private function initializePlayers(Data $data): array
+    {
         $players = [];
         $playerCount = count($data->get('players', ['player1' => []]));
-        for ($i = 1; $i <= $playerCount; $i++) {
-            $playerName = "player{$i}";
 
-            $players[$playerName] = [
+        for ($i = 1; $i <= $playerCount; $i++) {
+            $players["player{$i}"] = [
                 'hands' => [
                     'hand1' => [
                         'cards' => [],
@@ -67,98 +94,36 @@ class StartBlackJack
             ];
         }
 
-        $rules = new Rules();
-        $dealerPointsStart = $rules->countPoints($dealerCardOne);
-        $dealerPoints = $rules->countPoints(array_merge($dealerCardOne, $dealerCardTwo));
-
-        $data->set('players', $players);
-        $data->set('active_player', 'player1');
-        $data->set('active_hand', 'hand1');
-        $data->set('dealer_card_one', $dealerCardOne);
-        $data->set('dealer_card_two', $dealerCardTwo);
-        $data->set('dealer_points_start', $dealerPointsStart);
-        $data->set('dealer_points', $dealerPoints);
-        $data->set('dealer_cards', $dealerCards);
-        $data->set('deck_of_cards', $cards);
-
-        $data->save();
+        return $players;
     }
 
+    private function initializePlayersWithFixedCards(array &$deck): array
+    {
+        $players = [];
+        $playerCount = 1;
+        $remainingPlayers = $playerCount;
 
-    
-    // public function start(Data $data): void
-    // {
-    //     if ($data->get('coins') === null) {
-    //         $data->set('coins', 1000);
-    //     }
+        $fiveCards = [];
+        foreach ($deck as $index => $card) {
+            if ($card['value'] === '5') {
+                $fiveCards[] = $card;
+                unset($deck[$index]);
+                if (count($fiveCards) == 2) break;
+            }
+        }
+        $deck = array_values($deck);
 
-    //     $data->set('game_started', true);
+        $players['player1'] = [
+            'hands' => [
+                'hand1' => [
+                    'cards' => $fiveCards,
+                    'points' => (new Rules())->countPoints($fiveCards),
+                    'status' => 'waiting',
+                    'bet' => null
+                ]
+            ]
+        ];
 
-    //     $deck = new StartDeck();
-    //     $cards = $deck->startGame();
-
-    //     $dealerCardOne = array_splice($cards, 0, 1);
-    //     $dealerCardTwo = array_splice($cards, 0, 1);
-    //     $dealerCards = [];
-
-    //     $rules = new Rules();
-    //     $dealerPointsStart = $rules->countPoints($dealerCardOne);
-    //     $dealerPoints = $rules->countPoints(array_merge($dealerCardOne, $dealerCardTwo));
-
-    //     // Fake playerCards for player1 with two 5's
-    //     $playerCards = [
-    //         [
-    //             'card' => '<span class="red-card">5♥</span>',
-    //             'value' => '5',
-    //             'suit' => 'Hearts'
-    //         ],
-    //         [
-    //             'card' => '<span class="black-card">5♠</span>',
-    //             'value' => '5',
-    //             'suit' => 'Spades'
-    //         ]
-    //     ];
-    //     $playerPoints = $rules->countPoints($playerCards);
-
-    //     $players = [
-    //         'player1' => [
-    //             'hands' => [
-    //                 'hand1' => [
-    //                     'cards' => $playerCards,
-    //                     'points' => $playerPoints,
-    //                     'status' => 'active',
-    //                     'bet' => 10
-    //                 ]
-    //             ]
-    //         ]
-    //     ];
-
-    //     $playerCount = count($data->get('players', []));
-    //     for ($i = 2; $i <= $playerCount; $i++) {
-    //         $newPlayerCards = array_splice($cards, 0, 2);
-    //         $newPlayerPoints = $rules->countPoints($newPlayerCards);
-    //         $players["player{$i}"] = [
-    //             'hands' => [
-    //                 'hand1' => [
-    //                     'cards' => $newPlayerCards,
-    //                     'points' => $newPlayerPoints,
-    //                     'status' => 'active',
-    //                     'bet' => 10
-    //                 ]
-    //             ]
-    //         ];
-    //     }
-
-    //     $data->set('players', $players);
-    //     $data->set('active_player', 'player1');
-    //     $data->set('active_hand', 'hand1');
-    //     $data->set('dealer_card_one', $dealerCardOne);
-    //     $data->set('dealer_card_two', $dealerCardTwo);
-    //     $data->set('dealer_points_start', $dealerPointsStart);
-    //     $data->set('dealer_points', $dealerPoints);
-    //     $data->set('dealer_cards', $dealerCards);
-    //     $data->set('deck_of_cards', $cards);
-
-    //     $data->save();
-    // }
+        return $players;
+    }
 }

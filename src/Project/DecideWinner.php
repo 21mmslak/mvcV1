@@ -20,129 +20,93 @@ class DecideWinner
 
     public function decideWinner(Data $data): void
     {
-        $game = $data->get('game_started');
-        if ($game) return;
-
-        $dealerPoints = $data->get('dealer_points');
-        $players = $data->get('players');
-
-        $user = $this->security->getUser();
-        $coins = $data->get('coins');
-
-        if ($user instanceof User) {
-            $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
-            if ($scoreboard) {
-                $coins = $scoreboard->getCoins();
-            }
+        if ($data->get('game_started')) {
+            $data->set('game_started', false);
+            $data->save();
         }
-
+    
+        $dealerPoints = (int) $data->get('dealer_points');
+        $players = $data->get('players', []);
+        $user = $this->security->getUser();
+        $coins = $this->getUserCoins($user, $data);
+    
         foreach ($players as $name => &$player) {
             foreach ($player['hands'] as $handName => &$hand) {
-                $playerPoints = $hand['points'];
                 $bet = $hand['bet'] ?? 10;
-
-                if ($playerPoints > 21) {
-                    $coins -= $bet;
-                    $hand['result'] = "Dealer wins against {$name} {$handName} (bust)";
-                } elseif ($dealerPoints > 21) {
-                    $coins += $bet;
-                    $hand['result'] = "{$name} {$handName} wins! Dealer busts.";
-                } elseif ($playerPoints > $dealerPoints) {
-                    $coins += $bet;
-                    $hand['result'] = "{$name} {$handName} wins with higher points!";
-                } elseif ($dealerPoints > $playerPoints) {
-                    $coins -= $bet;
-                    $hand['result'] = "Dealer wins against {$name} {$handName}";
-                } else {
-                    $hand['result'] = "{$name} {$handName} and dealer draw.";
-                }
+                $result = $this->evaluateHand($hand, $dealerPoints, $bet, $coins);
+                $coins += $result['coinsDelta'];
+                $hand['result'] = $result['message'];
             }
         }
-
-        if ($user instanceof User && isset($scoreboard)) {
-            $scoreboard->setCoins($coins);
-            $this->em->persist($scoreboard);
-            $this->em->flush();
-        } else {
-            $data->set('coins', $coins);
-        }
-
+    
+        $this->updateCoins($user, $coins, $data);
         $data->set('players', $players);
         $data->save();
     }
 
+    private function getUserCoins($user, Data $data): int
+    {
+        if ($user instanceof User) {
+            $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
+            if ($scoreboard) {
+                return $scoreboard->getCoins();
+            }
+        }
+        return (int) $data->get('coins', 5000);
+    }
 
+    private function evaluateHand(array $hand, int $dealerPoints, int $bet, int $coins): array
+    {
+        $playerPoints = (int) ($hand['points'] ?? 0);
+        $cards = $hand['cards'] ?? [];
+        $bonus = 0;
 
-    // public function decideWinner(Data $data): void
-    // {
-    //     $game = $data->get('game_started');
-    //     if ($game) return;
+        if (count($cards) === 2) {
+            $rules = new \App\Project\Rules();
+            if ($rules->countPoints($cards) === 21) {
+                $bonus = (int) round($bet * 1.5);
+                return [
+                    'coinsDelta' => $bonus,
+                    'message' => "Blackjack! Player wins {$bonus} coins."
+                ];
+            }
+        }
 
-    //     $dealerPoints = $data->get('dealer_points');
-    //     $coins = $data->get('coins');
-    //     $players = $data->get('players');
+        if ($playerPoints > 21) {
+            return [
+                'coinsDelta' => -$bet,
+                'message' => "Dealer wins (bust)."
+            ];
+        }
+        if ($dealerPoints > 21 || $playerPoints > $dealerPoints) {
+            return [
+                'coinsDelta' => $bet,
+                'message' => "Player wins!"
+            ];
+        }
+        if ($dealerPoints > $playerPoints) {
+            return [
+                'coinsDelta' => -$bet,
+                'message' => "Dealer wins."
+            ];
+        }
+        return [
+            'coinsDelta' => 0,
+            'message' => "Draw."
+        ];
+    }
 
-    //     foreach ($players as $name => &$player) {
-    //         foreach ($player['hands'] as $handName => &$hand) {
-    //             $playerPoints = $hand['points'];
-    //             $bet = $hand['bet'] ?? 10;
-
-    //             if ($playerPoints > 21) {
-    //                 $coins -= $bet;
-    //                 $hand['result'] = "Dealer wins against {$name} {$handName} (bust)";
-    //             } elseif ($dealerPoints > 21) {
-    //                 $coins += $bet;
-    //                 $hand['result'] = "{$name} {$handName} wins! Dealer busts.";
-    //             } elseif ($playerPoints > $dealerPoints) {
-    //                 $coins += $bet;
-    //                 $hand['result'] = "{$name} {$handName} wins with higher points!";
-    //             } elseif ($dealerPoints > $playerPoints) {
-    //                 $coins -= $bet;
-    //                 $hand['result'] = "Dealer wins against {$name} {$handName}";
-    //             } else {
-    //                 $hand['result'] = "{$name} {$handName} and dealer draw.";
-    //             }
-    //         }
-    //     }
-
-    //     $data->set('coins', $coins);
-    //     $data->set('players', $players);
-    //     $data->save();
-    // }
-
-    // public function decideWinnerSplit(Data $data): void
-    // {
-    //     $game = $data->get('game_started');
-    //     if ($game) {
-    //         return;
-    //     }
-
-    //     $dealerPoints = $data->get('dealer_points');
-    //     $coins = $data->get('coins');
-    //     $results = [];
-
-    //     foreach (['hand1', 'hand2'] as $hand) {
-    //         $playerPoints = $data->get("{$hand}Points", 0);
-
-    //         if ($playerPoints > 21) {
-    //             $coins -= 10;
-    //             $results[] = "Dealer wins against {$hand} (Player busts)";
-    //         } elseif ($dealerPoints > 21) {
-    //             $coins += 10;
-    //             $results[] = "Player wins with {$hand} (Dealer busts)";
-    //         } elseif ($playerPoints > $dealerPoints) {
-    //             $coins += 10;
-    //             $results[] = "Player wins with {$hand}!";
-    //         } elseif ($dealerPoints > $playerPoints) {
-    //             $coins -= 10;
-    //             $results[] = "Dealer wins against {$hand}!";
-    //         } else {
-    //             $results[] = "Draw with {$hand}!";
-    //         }
-    //     }
-
-    //     $data->set('coins', $coins);
-    //     $data->set('results', $results);
-    //     $data->save();
-    // }
+    private function updateCoins($user, int $coins, Data $data): void
+    {
+        if ($user instanceof User) {
+            $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
+            if ($scoreboard) {
+                $scoreboard->setCoins($coins);
+                $this->em->persist($scoreboard);
+                $this->em->flush();
+                return;
+            }
+        }
+        $data->set('coins', $coins);
+    }
 }

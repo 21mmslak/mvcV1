@@ -379,29 +379,48 @@ class ProjectController extends AbstractController
     {
         $data = $this->getData($session);
         $addCardPlayer = new AddCardPlayer($this->em, $this->security, $this->decideWinner);
-
+    
         $gameOver = $addCardPlayer->addCard($data, $player, $hand);
     
         if ($gameOver) {
-            return $this->render('project/winner_split.html.twig', [
-                'data' => $data->getAll(),
-            ]);
+            $hasNext = $addCardPlayer->activateNext($data, $player, $hand);
+            if (!$hasNext) {
+                $addDealer = new AddCardDealer();
+                $addDealer->addCardDealer($data);
+                $this->decideWinner->decideWinner($data);
+                return $this->render('project/winner_split.html.twig', [
+                    'data' => $data->getAll(),
+                ]);
+            }
         }
     
         return $this->redirectToRoute('proj_main');
     }
 
-    #[Route("/set_bet/{player}/{hand}", name: "set_bet", methods: ["POST"])]
-    public function setBet(SessionInterface $session, Request $request, string $player, string $hand): Response
+    #[Route("/dubbel_add/{player}/{hand}", name: "dubbel_add")]
+    public function dubbel(SessionInterface $session, Request $request, string $player, string $hand): Response
     {
         $data = $this->getData($session);
-        $players = $data->get('players', []);
-        $bet = (int) $request->request->get('bet');
+        $addCardPlayer = new AddCardPlayer($this->em, $this->security, $this->decideWinner);
     
-        $players[$player]['hands'][$hand]['bet'] = $bet;
+        $addCardPlayer->addCard($data, $player, $hand);
     
+        $players = $data->get('players');
+        $players[$player]['hands'][$hand]['bet'] *= 2;
+        $players[$player]['hands'][$hand]['status'] = 'stand';
         $data->set('players', $players);
         $data->save();
+    
+        $hasNext = $addCardPlayer->activateNext($data, $player, $hand);
+    
+        if (!$hasNext) {
+            $addDealer = new AddCardDealer();
+            $addDealer->addCardDealer($data);
+            $this->decideWinner->decideWinner($data);
+            return $this->render('project/winner_split.html.twig', [
+                'data' => $data->getAll(),
+            ]);
+        }
     
         return $this->redirectToRoute('proj_main');
     }
