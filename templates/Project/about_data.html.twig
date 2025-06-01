@@ -1,0 +1,44 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}About database{% endblock %}
+
+{% block body %}
+<h1>About database</h1>
+
+<a href="{{ asset('img/er.png') }}">
+    <img src="{{ asset('img/er.png') }}" alt="Er diagram">
+</a>
+<p>
+    I User så sparas alla användare deras username och ett hashat lösenord även deras roll de får också ett id. I Scoreboard så sparas ett id och coins för varje användare 
+    sedan är user_id kopplat till User id som gör att varje användare har sina egna coins.
+</p>
+<p>
+    Jag byggde relationen mellan User och Scoreboard som en en-till-många-relation. Varje User kan ha flera Scoreboard, men varje Scoreboard hör till 
+    exakt en User. Detta hanteras med Doctrine, där Scoreboard har en ManyToOne-relation mot User, och User har en OneToMany-relation mot Scoreboard.
+</p>
+<p>
+    Jag valde att använda mig av sqlite då som databas då jag gjorde det under kursen men också för att spara lite tid som jag la på funktioner i själva spelet. :)
+</p>
+<p>
+    Ja, jag gjorde enhetstester mot databasen för Scoreboard. Jag använde en separat testdatabas som kördes med SQLite i minne :memory: vilket gör testerna 
+    snabba och isolerade från "riktig data". Testerna utnyttjade Doctrine EntityManager och repository-metoder för att säkerställa att data kunde sparas och 
+    hämtas korrekt. Jag såg även till att schema skapades och fixtures laddades innan testerna kördes, vilket verifierade att databasen var redo för tester.
+    När jag skulle börja testa User tabellen kännde jag att jag ramlade ner i ett för stort rabiithole och valde att skita i att testa den, då vi inte riktigt 
+    gått igenom allt detta än. Sedan när det kommer till Scrutinixer så valde jag där också att lämna det som det är standard då jag kännde att det bli allt för 
+    mycket/inte har lärt sig det än.
+</p>
+
+
+<p>
+    I databas kursen så skrev vi mer exakta sql frågor vilket leddet till att jag verafall kände att jag hade mer kontroll på frågorna. Den stora fördelen jag ser är att 
+    jag hade total kontroll över databashanteringen och att jag kunde optimera och anpassa SQL-koden efter behov. Vi kunde tex skriva komplicerade joins och specifika queries.
+     Men det krävde mycket kod och i början var det klrigt. Men med ORM och Doctrine i Symfony så sker mycket av detta i bakgrunden så iställer för att skriva sql direkt så skapar 
+     jag entiteter som jobbar med objekt och ORM genererar sql i bakgrunden. Det sprar tid i början då man inte behäver tänka så mycket på alla sql frågor, koden blir också 
+     lite renare och snyggare i min mening. Men efter ett tag tycker jag att jag tappat lite kontrollen på databasen jag gillade mer att ha tydliga fårgor i sql. Dock så är 
+     det en stor skillnad med ORM att man inte behöver skriva frågor för varje operation, utan kan till exempel säga findAll() eller findBy() och ORM genererar sql direkt.
+    Men som sagt nackdelen jag ser med ORM när man jobbat några eveckor till och fårn med det är att man lätt tappar kontollen och förståelsen av vad som händer i databasen. 
+    Medans i databas kursen så hade man alltid stenkoll på vad som hände i databasen men att det tog lite längre tid att skriva koden men jag skulle säga att den tiden spar 
+    man in när man ska felsöka något. :)
+</p>
+
+{% endblock %}
