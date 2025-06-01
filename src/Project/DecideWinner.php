@@ -25,50 +25,80 @@ class DecideWinner
             $data->save();
         }
     
-        $dealerPoints = (int) $data->get('dealer_points');
-        $players = $data->get('players', []);
-        $user = $this->security->getUser();
-        $coins = $this->getUserCoins($user, $data);
+        $dealerPoints = is_numeric($data->get('dealer_points')) ? (int) $data->get('dealer_points') : 0;
+        $players = $data->get('players');
+        $players = is_array($players) ? $players : [];
     
-        foreach ($players as $name => &$player) {
-            foreach ($player['hands'] as $handName => &$hand) {
-                $bet = $hand['bet'] ?? 10;
-                $result = $this->evaluateHand($hand, $dealerPoints, $bet, $coins);
+        $user = $this->security->getUser();
+        $coins = $this->getUserCoins($user instanceof User ? $user : null, $data);
+    
+        foreach ($players as $playerName => $playerDataRaw) {
+            if (!is_array($playerDataRaw) || !isset($playerDataRaw['hands']) || !is_array($playerDataRaw['hands'])) {
+                continue;
+            }
+    
+            foreach ($playerDataRaw['hands'] as $handName => $handData) {
+                if (!is_array($handData)) {
+                    continue;
+                }
+    
+                $bet = isset($handData['bet']) && is_numeric($handData['bet']) ? (int) $handData['bet'] : 10;
+                $result = $this->evaluateHand($handData, $dealerPoints, $bet, $coins);
                 $coins += $result['coinsDelta'];
-                $hand['result'] = $result['message'];
+    
+                $players[$playerName]['hands'][$handName]['result'] = $result['message'];
             }
         }
     
-        $this->updateCoins($user, $coins, $data);
+        $this->updateCoins($user instanceof User ? $user : null, $coins, $data);
         $data->set('players', $players);
         $data->save();
     }
 
-    private function getUserCoins($user, Data $data): int
+    /**
+     * @param User|null $user
+     * @param Data $data
+     * @return int
+     */
+    private function getUserCoins(?User $user, Data $data): int
     {
         if ($user instanceof User) {
             $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);
             if ($scoreboard) {
-                return $scoreboard->getCoins();
+                return (int) ($scoreboard->getCoins() ?? 5000);
             }
         }
-        return (int) $data->get('coins', 5000);
+        $coins = $data->get('coins', 5000);
+        return is_numeric($coins) ? (int) $coins : 5000;
     }
 
+    /**
+     * @param array<string, mixed> $hand
+     * @param int $dealerPoints
+     * @param int $bet
+     * @param int $coins
+     * @return array{coinsDelta: int, message: string}
+     */
     private function evaluateHand(array $hand, int $dealerPoints, int $bet, int $coins): array
     {
-        $playerPoints = (int) ($hand['points'] ?? 0);
-        $cards = $hand['cards'] ?? [];
+        $playerPoints = isset($hand['points']) && is_numeric($hand['points']) ? (int) $hand['points'] : 0;
+        $cards = isset($hand['cards']) && is_array($hand['cards']) ? $hand['cards'] : [];
         $bonus = 0;
 
         if (count($cards) === 2) {
-            $rules = new \App\Project\Rules();
-            if ($rules->countPoints($cards) === 21) {
-                $bonus = (int) round($bet * 1.5);
-                return [
-                    'coinsDelta' => $bonus,
-                    'message' => "Blackjack! Player wins {$bonus} coins."
-                ];
+            $validCards = array_filter($cards, function ($card) {
+                return is_array($card) && isset($card['value']) && isset($card['suit']);
+            });
+        
+            if (count($validCards) === 2) {
+                $rules = new \App\Project\Rules();
+                if ($rules->countPoints($validCards) === 21) {
+                    $bonus = (int) round($bet * 1.5);
+                    return [
+                        'coinsDelta' => $bonus,
+                        'message' => "Blackjack! Player wins {$bonus} coins."
+                    ];
+                }
             }
         }
 
@@ -96,7 +126,13 @@ class DecideWinner
         ];
     }
 
-    private function updateCoins($user, int $coins, Data $data): void
+    /**
+     * @param User|null $user
+     * @param int $coins
+     * @param Data $data
+     * @return void
+     */
+    private function updateCoins(?User $user, int $coins, Data $data): void
     {
         if ($user instanceof User) {
             $scoreboard = $this->em->getRepository(Scoreboard::class)->findOneBy(['user' => $user]);

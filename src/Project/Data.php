@@ -5,11 +5,13 @@ namespace App\Project;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-
 class Data extends AbstractController
 {
     private SessionInterface $session;
+
+    /** @var array<string, mixed> */
     private array $state = [];
+
     private const SESSION_KEY = 'game_state';
 
     public function __construct(SessionInterface $session)
@@ -17,6 +19,7 @@ class Data extends AbstractController
         $this->session = $session;
         $this->load();
     }
+
     public function set(string $key, mixed $value): void
     {
         $this->state[$key] = $value;
@@ -34,7 +37,8 @@ class Data extends AbstractController
 
     public function load(): void
     {
-        $this->state = $this->session->get(self::SESSION_KEY, []);
+        $loadedState = $this->session->get(self::SESSION_KEY, []);
+        $this->state = is_array($loadedState) ? $loadedState : [];
     }
 
     public function reset(): void
@@ -43,6 +47,7 @@ class Data extends AbstractController
         $this->save();
     }
 
+    /** @return array<string, mixed> */
     public function getAll(): array
     {
         return $this->state;

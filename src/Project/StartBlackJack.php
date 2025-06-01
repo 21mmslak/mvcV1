@@ -51,24 +51,35 @@ class StartBlackJack
         if ($user instanceof User) {
             $repo = $this->em->getRepository(Scoreboard::class);
             $scoreboard = $repo->findOneBy(['user' => $user]);
-
+    
             if (!$scoreboard) {
                 $scoreboard = new Scoreboard();
                 $scoreboard->setUser($user)->setCoins(5000);
                 $this->em->persist($scoreboard);
                 $this->em->flush();
             }
-
-            return $scoreboard->getCoins();
+    
+            return (int) $scoreboard->getCoins();
         }
-
-        return $data->get('coins') ?? 5000;
+    
+        $coins = $data->get('coins');
+        return is_numeric($coins) ? (int) $coins : 5000;
     }
 
+    /**
+     * Gives card to dealer
+     *
+     * @param array<int, array<string, mixed>> $deck Array of cards
+     * @return array{card_one: array<string, mixed>, card_two: array<string, mixed>, remaining_deck: array<int, array<string, mixed>>}
+     */
     private function initializeDealer(array $deck): array
     {
         $cardOne = array_shift($deck);
         $cardTwo = array_shift($deck);
+
+        $cardOne = is_array($cardOne) ? $cardOne : [];
+        $cardTwo = is_array($cardTwo) ? $cardTwo : [];
+
         return [
             'card_one' => $cardOne,
             'card_two' => $cardTwo,
@@ -76,10 +87,21 @@ class StartBlackJack
         ];
     }
 
+    /**
+     * Initialize players with default hands.
+     *
+     * @param Data $data
+     * @return array<string, array{hands: array<string, array{cards: array, points: int, status: string, bet: ?int}>}>
+     */
     private function initializePlayers(Data $data): array
     {
+        $existingPlayers = $data->get('players', ['player1' => []]);
+        if (!is_array($existingPlayers)) {
+            $existingPlayers = ['player1' => []];
+        }
+
+        $playerCount = count($existingPlayers);
         $players = [];
-        $playerCount = count($data->get('players', ['player1' => []]));
 
         for ($i = 1; $i <= $playerCount; $i++) {
             $players["player{$i}"] = [
@@ -93,36 +115,6 @@ class StartBlackJack
                 ]
             ];
         }
-
-        return $players;
-    }
-
-    private function initializePlayersWithFixedCards(array &$deck): array
-    {
-        $players = [];
-        $playerCount = 1;
-        $remainingPlayers = $playerCount;
-
-        $fiveCards = [];
-        foreach ($deck as $index => $card) {
-            if ($card['value'] === '5') {
-                $fiveCards[] = $card;
-                unset($deck[$index]);
-                if (count($fiveCards) == 2) break;
-            }
-        }
-        $deck = array_values($deck);
-
-        $players['player1'] = [
-            'hands' => [
-                'hand1' => [
-                    'cards' => $fiveCards,
-                    'points' => (new Rules())->countPoints($fiveCards),
-                    'status' => 'waiting',
-                    'bet' => null
-                ]
-            ]
-        ];
 
         return $players;
     }

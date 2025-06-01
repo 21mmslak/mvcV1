@@ -18,29 +18,32 @@ class UserRegistration
         $this->passwordHasher = $passwordHasher;
     }
 
+    /**
+     * @return array{success: bool, message: string}
+     */
     public function register(Request $request): array
     {
-        $username = $request->request->get('username');
-        $password = $request->request->get('password');
-        $confirmPassword = $request->request->get('confirm_password');
-
+        $username = (string) $request->request->get('username');
+        $password = (string) $request->request->get('password', '');
+        $confirmPassword = (string) $request->request->get('confirm_password', '');
+    
         if ($password !== $confirmPassword) {
             return ['success' => false, 'message' => 'Passwords do not match.'];
         }
-
+    
         if ($this->em->getRepository(User::class)->findOneBy(['username' => $username])) {
             return ['success' => false, 'message' => 'Username already exists.'];
         }
-
+    
         $user = new User();
         $user->setUsername($username);
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_USER']);
-
+    
         $this->em->persist($user);
         $this->em->flush();
-
+    
         return ['success' => true, 'message' => 'Account created successfully!'];
     }
 }

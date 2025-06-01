@@ -13,6 +13,6 @@ parameters:
             - ../../src/Dice
             - ../../src/Entity
             - ../../src/Repository
-            - ../../tests/Controller/**
+            - ../../tests/**
     bootstrapFiles:
         #- .phpstan.constants.php
