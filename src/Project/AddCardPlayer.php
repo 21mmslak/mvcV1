@@ -7,43 +7,18 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class AddCardPlayer
 {
-    private EntityManagerInterface $em;
-    private Security $security;
-    private DecideWinner $decideWinner;
+    public function __construct(
+        private EntityManagerInterface $em,
+        private Security $security,
+        private DecideWinner $decideWinner
+    ) {}
 
-    public function __construct(EntityManagerInterface $em, Security $security, DecideWinner $decideWinner)
-    {
-        $this->em = $em;
-        $this->security = $security;
-        $this->decideWinner = $decideWinner;
-    }
     public function addCard(Data $data, string $player, string $hand, bool $isDouble = false): bool
     {
-        $playersRaw = $data->get('players', []);
-        $players = is_array($playersRaw) ? $playersRaw : [];
+        $players = $this->getArray($data->get('players'));
+        $deck = $this->getArray($data->get('deck_of_cards'));
 
-        if (!isset($players[$player]) || !is_array($players[$player])) {
-            return false;
-        }
-
-        if (!isset($players[$player]['hands']) || !is_array($players[$player]['hands'])) {
-            return false;
-        }
-
-        if (!isset($players[$player]['hands'][$hand]) || !is_array($players[$player]['hands'][$hand])) {
-            return false;
-        }
-
-        $handData = &$players[$player]['hands'][$hand];
-
-        if (!isset($handData['cards']) || !is_array($handData['cards'])) {
-            $handData['cards'] = [];
-        }
-
-        $deckRaw = $data->get('deck_of_cards', []);
-        $deck = is_array($deckRaw) ? $deckRaw : [];
-
-        if (empty($deck)) {
+        if (!isset($players[$player]['hands'][$hand]['cards'])) {
             return false;
         }
 
@@ -52,19 +27,18 @@ class AddCardPlayer
             return false;
         }
 
-        $handData['cards'][] = $addedCard;
+        $players[$player]['hands'][$hand]['cards'][] = $addedCard;
 
         $rules = new Rules();
-        $points = $rules->countPoints($handData['cards']);
-        $handData['points'] = $points;
+        $points = $rules->countPoints($players[$player]['hands'][$hand]['cards']);
+        $players[$player]['hands'][$hand]['points'] = $points;
 
-        if ($points > 21) {
-            $handData['status'] = 'bust';
-        } elseif ($isDouble) {
-            $handData['status'] = 'stand';
-        } else {
-            $handData['status'] = 'active';
-        }
+        $status = match (true) {
+            $points > 21 => 'bust',
+            $isDouble => 'stand',
+            default => 'active',
+        };
+        $players[$player]['hands'][$hand]['status'] = $status;
 
         $data->set('deck_of_cards', $deck);
         $data->set('players', $players);
@@ -75,27 +49,20 @@ class AddCardPlayer
 
     public function activateNext(Data $data, string $currentPlayer, string $currentHand): bool
     {
-        $playersRaw = $data->get('players', []);
-        $players = is_array($playersRaw) ? $playersRaw : [];
-
+        $players = $this->getArray($data->get('players'));
         $foundCurrent = false;
 
-        foreach ($players as $playerName => $player) {
-            if (!is_array($player) || !isset($player['hands']) || !is_array($player['hands'])) {
+        foreach ($players as $playerName => &$player) {
+            if (!isset($player['hands']) || !is_array($player['hands'])) {
                 continue;
             }
-        
-            foreach ($player['hands'] as $handName => $hand) {
-                if (!is_array($hand)) {
+            foreach ($player['hands'] as $handName => &$hand) {
+                if (!$foundCurrent && $playerName === $currentPlayer && $handName === $currentHand) {
+                    $foundCurrent = true;
                     continue;
                 }
-        
-                if (isset($players[$playerName]) && is_array($players[$playerName]) &&
-                    isset($players[$playerName]['hands']) && is_array($players[$playerName]['hands']) &&
-                    isset($players[$playerName]['hands'][$handName]) && is_array($players[$playerName]['hands'][$handName]) &&
-                    isset($players[$playerName]['hands'][$handName]['status']) && $players[$playerName]['hands'][$handName]['status'] === 'waiting'
-                ) {
-                    $players[$playerName]['hands'][$handName]['status'] = 'active';
+                if ($foundCurrent && ($hand['status'] ?? '') === 'waiting') {
+                    $hand['status'] = 'active';
                     $data->set('players', $players);
                     $data->set('active_player', $playerName);
                     $data->set('active_hand', $handName);
@@ -114,5 +81,15 @@ class AddCardPlayer
     public function checkAndHandleGameOver(Data $data, string $player, string $hand): bool
     {
         return !$this->activateNext($data, $player, $hand);
+    }
+
+    /**
+     * Ensures the provided input is an array.
+     * @param mixed $input
+     * @return array
+     */
+    private function getArray(mixed $input): array
+    {
+        return is_array($input) ? $input : [];
     }
 }

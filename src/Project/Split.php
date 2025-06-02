@@ -12,66 +12,96 @@ class Split
      * @param Data $data
      * @param string $player
      * @param string $hand
-     * @return void
      */
     public function splitHand(Data $data, string $player, string $hand): void
     {
-        $playersRaw = $data->get('players', []);
-        $players = is_array($playersRaw) ? $playersRaw : [];
-
-        $deckRaw = $data->get('deck_of_cards', []);
-        $deck = is_array($deckRaw) ? $deckRaw : [];
-
+        $players = $this->getArray($data->get('players', []));
+        $deck = $this->getArray($data->get('deck_of_cards', []));
         $rules = new Rules();
-
-        if (!isset($players[$player]) || !is_array($players[$player])) {
+    
+        if (!isset($players[$player]) || !is_array($players[$player]) || !isset($players[$player]['hands']) || !is_array($players[$player]['hands']) || !isset($players[$player]['hands'][$hand])) {
             return;
         }
-
-        $hands = $players[$player]['hands'] ?? [];
-        if (!is_array($hands) || !isset($hands[$hand]) || !is_array($hands[$hand])) {
+    
+        $handData = $this->getArray($players[$player]['hands'][$hand]);
+        $currentCards = $this->getArray($handData['cards']);
+    
+        if (count($currentCards) < 2) {
             return;
         }
-
-        $handData = $hands[$hand];
-        $currentCards = $handData['cards'] ?? [];
-        if (!is_array($currentCards) || count($currentCards) < 2) {
-            return;
-        }
-
-        $card1 = is_array($currentCards[0]) ? $currentCards[0] : ['value' => '0'];
-        $card2 = is_array($currentCards[1]) ? $currentCards[1] : ['value' => '0'];
-
+    
+        [$rawCard1, $rawCard2] = array_slice($currentCards, 0, 2);
+        $card1 = $this->getCard($rawCard1);
+        $card2 = $this->getCard($rawCard2);
+    
         $originalBet = isset($handData['bet']) && is_numeric($handData['bet']) ? (int) $handData['bet'] : 10;
-
-        $newCard1 = array_shift($deck);
-        $newCard1 = is_array($newCard1) ? $newCard1 : ['value' => '0'];
-
-        $newCard2 = array_shift($deck);
-        $newCard2 = is_array($newCard2) ? $newCard2 : ['value' => '0'];
-
-        $hand1Cards = [$card1, $newCard1];
-        $hand2Cards = [$card2, $newCard2];
-
+    
+        $newCard1 = $this->getCard(array_shift($deck));
+        $newCard2 = $this->getCard(array_shift($deck));
+    
         $players[$player]['hands'] = [
-            'hand1' => [
-                'cards' => $hand1Cards,
-                'points' => $rules->countPoints($hand1Cards),
-                'status' => 'active',
-                'bet' => $originalBet,
-            ],
-            'hand2' => [
-                'cards' => $hand2Cards,
-                'points' => $rules->countPoints($hand2Cards),
-                'status' => 'waiting',
-                'bet' => $originalBet,
-            ],
+            'hand1' => $this->createHand([$card1, $newCard1], $originalBet, 'active', $rules),
+            'hand2' => $this->createHand([$card2, $newCard2], $originalBet, 'waiting', $rules),
         ];
-
+    
         $data->set('deck_of_cards', $deck);
         $data->set('players', $players);
         $data->set('active_player', $player);
         $data->set('active_hand', 'hand1');
         $data->save();
+    }
+
+    /**
+     * Get array
+     * 
+     * @param mixed $input
+     * @return array<mixed>
+     */
+    private function getArray(mixed $input): array
+    {
+        return is_array($input) ? $input : [];
+    }
+
+    /**
+     * Ensure a valid card format.
+     *
+     * @param mixed $card
+     * @return array{value: string, suit: string}
+     */
+    private function getCard(mixed $card): array
+    {
+        if (is_array($card) && isset($card['value'], $card['suit']) && is_string($card['value']) && is_string($card['suit'])) {
+            $value = (string) $card['value'];
+            $suit = (string) $card['suit'];
+            $symbol = match ($suit) {
+                'Hearts' => '♥', 'Diamonds' => '♦', 'Clubs' => '♣', 'Spades' => '♠', default => $suit
+            };
+            $color = in_array($suit, ['Hearts', 'Diamonds']) ? 'red' : 'black';
+            return [
+                'value' => $value,
+                'suit' => $suit,
+                'card' => "<span style='color:{$color}'>{$value}{$symbol}</span>"
+            ];
+        }
+        return ['value' => '0', 'suit' => '', 'card' => '0'];
+    }
+
+    /**
+     * Create a hand structure.
+     *
+     * @param array<int, array<string, mixed>> $cards
+     * @param int $bet
+     * @param string $status
+     * @param Rules $rules
+     * @return array<string, mixed>
+     */
+    private function createHand(array $cards, int $bet, string $status, Rules $rules): array
+    {
+        return [
+            'cards' => $cards,
+            'points' => $rules->countPoints($cards),
+            'status' => $status,
+            'bet' => $bet,
+        ];
     }
 }
