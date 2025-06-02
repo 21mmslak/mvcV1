@@ -49,7 +49,7 @@
 <div class="page">
     <div class="content content-first">
         <div class="report-details">
-            Created at 2025-05-17 19:53:21        , with PHPMetrics v2.8.2 (<a href="https://twitter.com/Halleck45">Jean-François Lépine</a>).
+            Created at 2025-06-02 16:56:58        , with PHPMetrics v2.8.2 (<a href="https://twitter.com/Halleck45">Jean-François Lépine</a>).
         </div>
 
         
@@ -93,7 +93,7 @@
                             <path d="M0 0h24v24H0z" fill="none">
                             <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z">
                         </svg>
-                        Violations (11)
+                        Violations (17)
                     </a>
                 </li>
                                     <li>
@@ -262,7 +262,7 @@
 
     var relations = [
     {
-        "name": "\\App\\Repository\\ProductRepository",
+        "name": "\\App\\Repository\\ScoreboardRepository",
         "size": 3000,
         "relations": []
     },
@@ -277,9 +277,22 @@
         "relations": []
     },
     {
+        "name": "\\App\\Repository\\ProductRepository",
+        "size": 3000,
+        "relations": []
+    },
+    {
         "name": "\\App\\Repository\\BooksRepository",
         "size": 3000,
         "relations": []
+    },
+    {
+        "name": "\\App\\Repository\\UserRepository",
+        "size": 3000,
+        "relations": [
+            "\\Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepository",
+            "\\Doctrine\\Persistence\\ManagerRegistry"
+        ]
     },
     {
         "name": "\\App\\Card\\Card",
@@ -314,6 +327,36 @@
         "relations": []
     },
     {
+        "name": "\\App\\Entity\\User",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Symfony\\Component\\Security\\Core\\User\\UserInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Symfony\\Component\\Security\\Core\\User\\PasswordAuthenticatedUserInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Doctrine\\Common\\Collections\\ArrayCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Doctrine\\Common\\Collections\\Collection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\App\\Entity\\Scoreboard",
+        "size": 3000,
+        "relations": []
+    },
+    {
         "name": "\\App\\Dice\\DiceHand",
         "size": 3000,
         "relations": []
@@ -334,15 +377,35 @@
         "relations": []
     },
     {
-        "name": "\\App\\Controller\\CardController",
+        "name": "\\App\\User\\UserRegistration",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Doctrine\\ORM\\EntityManagerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Symfony\\Component\\PasswordHasher\\Hasher\\UserPasswordHasherInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Symfony\\Component\\HttpFoundation\\Request",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\App\\Controller\\UserController",
         "size": 3000,
         "relations": [
             "\\Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController",
             "\\Symfony\\Component\\HttpFoundation\\Response",
-            "\\Symfony\\Component\\HttpFoundation\\Session\\SessionInterface",
-            "\\App\\Card\\DeckOfCards",
-            "\\LogicException",
-            "\\Exception"
+            "\\Symfony\\Component\\HttpFoundation\\Request",
+            "\\App\\User\\UserRegistration",
+            "\\Symfony\\Component\\Security\\Http\\Authentication\\AuthenticationUtils",
+            "\\Symfony\\Component\\HttpFoundation\\Session\\SessionInterface"
         ]
     },
     {
@@ -356,9 +419,26 @@
         "relations": []
     },
     {
+        "name": "\\Symfony\\Component\\Security\\Http\\Authentication\\AuthenticationUtils",
+        "size": 3000,
+        "relations": []
+    },
+    {
         "name": "\\Symfony\\Component\\HttpFoundation\\Session\\SessionInterface",
         "size": 3000,
         "relations": []
+    },
+    {
+        "name": "\\App\\Controller\\CardController",
+        "size": 3000,
+        "relations": [
+            "\\Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController",
+            "\\Symfony\\Component\\HttpFoundation\\Response",
+            "\\Symfony\\Component\\HttpFoundation\\Session\\SessionInterface",
+            "\\App\\Card\\DeckOfCards",
+            "\\LogicException",
+            "\\Exception"
+        ]
     },
     {
         "name": "\\Exception",
@@ -385,6 +465,91 @@
         "relations": []
     },
     {
+        "name": "\\App\\Controller\\ProjectController",
+        "size": 3000,
+        "relations": [
+            "\\Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController",
+            "\\Symfony\\Bundle\\SecurityBundle\\Security",
+            "\\Doctrine\\ORM\\EntityManagerInterface",
+            "\\App\\Project\\DecideWinner",
+            "\\App\\Project\\Data",
+            "\\Symfony\\Component\\HttpFoundation\\Session\\SessionInterface",
+            "\\Symfony\\Component\\HttpFoundation\\Response",
+            "\\App\\Project\\StartBlackJack",
+            "\\App\\Project\\Split",
+            "\\App\\Project\\AddCardPlayer",
+            "\\App\\Project\\AddCardDealer",
+            "\\App\\Project\\Rules",
+            "\\Symfony\\Component\\HttpFoundation\\Request",
+            "\\Symfony\\Component\\HttpFoundation\\JsonResponse",
+            "\\App\\Repository\\ScoreboardRepository"
+        ]
+    },
+    {
+        "name": "\\Symfony\\Bundle\\SecurityBundle\\Security",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\App\\Project\\DecideWinner",
+        "size": 3000,
+        "relations": [
+            "\\Symfony\\Bundle\\SecurityBundle\\Security",
+            "\\Doctrine\\ORM\\EntityManagerInterface",
+            "\\App\\Project\\Data",
+            "\\App\\Project\\Rules"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\Data",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\App\\Project\\StartBlackJack",
+        "size": 3000,
+        "relations": [
+            "\\Symfony\\Bundle\\SecurityBundle\\Security",
+            "\\Doctrine\\ORM\\EntityManagerInterface",
+            "\\App\\Project\\Data",
+            "\\App\\Project\\StartDeck",
+            "\\App\\Project\\Rules",
+            "\\App\\Entity\\Scoreboard"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\Split",
+        "size": 3000,
+        "relations": [
+            "\\App\\Project\\Data",
+            "\\App\\Project\\Rules"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\AddCardPlayer",
+        "size": 3000,
+        "relations": [
+            "\\Doctrine\\ORM\\EntityManagerInterface",
+            "\\Symfony\\Bundle\\SecurityBundle\\Security",
+            "\\App\\Project\\DecideWinner",
+            "\\App\\Project\\Data",
+            "\\App\\Project\\Rules"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\AddCardDealer",
+        "size": 3000,
+        "relations": [
+            "\\App\\Project\\Data",
+            "\\App\\Project\\Rules"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\Rules",
+        "size": 3000,
+        "relations": []
+    },
+    {
         "name": "\\App\\Controller\\MetricsController",
         "size": 3000,
         "relations": [
@@ -402,21 +567,17 @@
             "\\Symfony\\Component\\HttpFoundation\\Request",
             "\\Doctrine\\ORM\\EntityManagerInterface",
             "\\Symfony\\Component\\String\\Slugger\\SluggerInterface",
+            "\\RuntimeException",
             "\\App\\Entity\\Books"
         ]
     },
     {
-        "name": "\\Symfony\\Component\\HttpFoundation\\Request",
-        "size": 3000,
-        "relations": []
-    },
-    {
-        "name": "\\Doctrine\\ORM\\EntityManagerInterface",
-        "size": 3000,
-        "relations": []
-    },
-    {
         "name": "\\Symfony\\Component\\String\\Slugger\\SluggerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RuntimeException",
         "size": 3000,
         "relations": []
     },
@@ -480,11 +641,6 @@
         ]
     },
     {
-        "name": "\\RuntimeException",
-        "size": 3000,
-        "relations": []
-    },
-    {
         "name": "\\Symfony\\Component\\Routing\\RouterInterface",
         "size": 3000,
         "relations": []
@@ -529,6 +685,20 @@
             "\\Symfony\\Component\\HttpFoundation\\Request",
             "\\LogicException"
         ]
+    },
+    {
+        "name": "\\App\\Controller\\ScoreboardController",
+        "size": 3000,
+        "relations": [
+            "\\Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController",
+            "\\Symfony\\Component\\HttpFoundation\\Response",
+            "\\App\\Repository\\ScoreboardRepository"
+        ]
+    },
+    {
+        "name": "\\App\\Project\\StartDeck",
+        "size": 3000,
+        "relations": []
     },
     {
         "name": "\\Twig\\Environment",
