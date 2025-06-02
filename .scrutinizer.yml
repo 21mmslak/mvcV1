@@ -2,7 +2,7 @@ imports:
     - php
 
 filter:
-    excluded_paths: [vendor/*, test/*, src/Controller*, src/Entity, src/Repository]
+    excluded_paths: [vendor/*, test/*, src/Controller*, src/Entity/*, src/Repository/*, migration/*]
 
 build:
     image: default-bionic

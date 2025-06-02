@@ -79,7 +79,7 @@
     "description": "no description",
     "scripts": {
         "phpdoc": "tools/phpdoc/phpdoc --config=tools/phpdoc/phpdoc.xml",
-        "phpunit": "XDEBUG_MODE=coverage vendor/bin/phpunit",
+        "phpunit": "XDEBUG_MODE=coverage APP_ENV=test DATABASE_URL=sqlite:///%kernel.project_dir%/var/test.db vendor/bin/phpunit",
         "phpmd": "tools/phpmd/vendor/bin/phpmd . text tools/phpmd/phpmd.xml || true",
         "phpstan": "php -d memory_limit=512M tools/phpstan/vendor/bin/phpstan analyse -c tools/phpstan/phpstan.neon || true",
         "phpmetrics": "tools/phpmetrics/vendor/bin/phpmetrics --config=tools/phpmetrics/phpmetrics.json",

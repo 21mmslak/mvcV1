@@ -1,0 +1,118 @@
+body {
+    margin: 0 auto;
+    max-width: 1500px;
+}
+
+.content {
+    background-color: #945c5c !important; 
+}
+
+.api-link {
+    color: rgb(221, 255, 0);
+}
+
+.red-card {
+    color: red;
+}
+
+.black-card {
+    color: black;
+}
+
+.profile-container {
+    display: flex;
+    padding-left: 10px;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+.profile-container a{
+    color: #0022ff;
+}
+
+.profile-img {
+    width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+    background: linear-gradient(to right, #1a2a45, #3974e2);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    height: 150px;
+}
+
+body {
+    background: url('../images/mrGreen.png') no-repeat center center fixed !important;
+    background-size: cover;
+    height: 100vh;
+    margin: 0;
+}
+
+nav {
+    background: linear-gradient(to right, #fafafa, #1a2a45);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+  
+ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+  
+ul a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+  
+ul a:hover {
+    color: #ffd700;
+}
+
+h2, h1 {
+    border-bottom: 4px double #0022ff;
+}
+
+h3, h4 {
+    border-bottom: 2px double #0022ff;
+}
+
+input {
+    font-size: 1em;
+}
+
+.die {
+    font-size: 2em;
+}
+
+.dieH1 {
+    font-size: 1.7rem;
+}
+
+.flash-notice {
+    padding: 0.5em;
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+.flash-notice:before {
+    content: "ⓘ";
+}
+
+.flash-warning {
+    padding: 0.5em;
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+.flash-warning:before {
+    content: "⚠";
+}
