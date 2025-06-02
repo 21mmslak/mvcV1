@@ -7,28 +7,32 @@
 
 <h2>Dealer</h2>
 <p>Points: {{ data.dealer_points }}</p>
-<ul>
-    {% for card in data.dealer_card_one %}
-        <li>{{ card.card|raw }}</li>
-    {% endfor %}
-    {% for card in data.dealer_card_two %}
-        <li>{{ card.card|raw }}</li>
-    {% endfor %}
-    {% for card in data.dealer_cards %}
-        <li>{{ card.card|raw }}</li>
-    {% endfor %}
-</ul>
+<div class="cards-list">
+    <ul>
+        {% for card in data.dealer_card_one %}
+            <li>{{ card.card|raw }}</li>
+        {% endfor %}
+        {% for card in data.dealer_card_two %}
+            <li>{{ card.card|raw }}</li>
+        {% endfor %}
+        {% for card in data.dealer_cards %}
+            <li>{{ card.card|raw }}</li>
+        {% endfor %}
+    </ul>
+</div>
 
 <h2>Players</h2>
 {% for playerName, player in data.players %}
     <h3>{{ playerName|capitalize }}</h3>
     {% for handName, hand in player.hands %}
         <h4>{{ handName|capitalize }}</h4>
-        <ul>
-            {% for card in hand.cards %}
-                <li>{{ card.card|raw }}</li>
-            {% endfor %}
-        </ul>
+        <div class="cards-list">
+            <ul>
+                {% for card in hand.cards %}
+                    <li>{{ card.card|raw }}</li>
+                {% endfor %}
+            </ul>
+        </div>
         <p>Points: {{ hand.points }}</p>
         <p>Bet: {{ hand.bet|default('10') }}</p>
         <p>Result: {{ hand.result|default('No result') }}</p>

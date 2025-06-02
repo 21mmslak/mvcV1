@@ -63,6 +63,12 @@ class ProjectController extends AbstractController
         return $this->render('project/about_data.html.twig');
     }
 
+    #[Route("/proj/kravSex", name: "kravSex")]
+    public function kravSex(): Response
+    {
+        return $this->render('project/kravSex.html.twig');
+    }
+
     #[Route("/proj_main", name: "proj_main")]
     public function projMain(SessionInterface $session): Response
     {

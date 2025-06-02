@@ -30,25 +30,27 @@
 
     {% if data.players|length < 3 %}
         <a href="{{ path('add_hand') }}">
-            <button type="button">Lägg till ny spelare</button>
+            <button type="button">Add player</button>
         </a>
     {% endif %}
     {% if data.players|length > 1  %}
     {% set lastPlayer = data.players|keys|last %}
         <a href="{{ path('remove_hand', {'name': lastPlayer}) }}">
-            <button type="button">Ta bort senaste spelare ({{ lastPlayer|capitalize }})</button>
+            <button type="button">Delite player ({{ lastPlayer|capitalize }})</button>
         </a>
     {% endif %}
 {% endif %}
 
 {% if allBetsSet %}
     <h2>Dealer</h2>
-    <ul>
-        {% for card in data.dealer_card_one %}
-            <li>{{ card.card|raw }}</li>
-        {% endfor %}
-        <li>?</li>
-    </ul>
+    <div class="cards-list">
+        <ul>
+            {% for card in data.dealer_card_one %}
+                <li>{{ card.card|raw }}</li>
+            {% endfor %}
+            <li>?</li>
+        </ul>
+    </div>
     <p>Points: {{ data.dealer_points_start }}</p>
 
     {% for playerName, player in data.players %}
@@ -56,11 +58,13 @@
         {% for handName, hand in player.hands %}
             <h4>{{ handName|capitalize }}</h4>
             <p>Bet: {{ hand.bet }}</p>
-            <ul>
-                {% for card in hand.cards %}
-                    <li>{{ card.card|raw }}</li>
-                {% endfor %}
-            </ul>
+            <div class="cards-list">
+                <ul>
+                    {% for card in hand.cards %}
+                        <li>{{ card.card|raw }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
             <p>Points: {{ hand.points }}</p>
 
             {% if data.active_player == playerName and data.active_hand == handName and hand.status == 'active' %}

@@ -1,0 +1,78 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}Krav 6{% endblock %}
+
+{% block body %}
+<h1>Krav 6</h1>
+
+<h3>Spela flera</h3>
+<p>
+    Jag vet att detta är ett baskrav att man ska kunna spela flera personer, men jag vill bar lyfta den lite snabbt. Det var en funktion som tog mycket tankekraft 
+    jag märkte ganska snabbt att ju bättre struktur jag har ju lättare kommer det att bli att implementera andra funktioner. Jag valde att göra en array av alla spelare 
+    där vaje spealre har händer (används sedan till split funktion) och vaje hand har kort, status och bet. Sedan så sparas och updateras det i Data objekt i sessionen.
+</p>
+
+
+<h3>Dublla</h3>
+<p>
+    Dubbla funktionen var mer att tänka rätt än att den var så "svår", eftersom jag redan förberätt väldigt bra med att spela flera spelare. Jag implimenterade det 
+    följande att när spealren "dubblar" så får den ett till kort på handen och status uppdateras till "stand" sedan så uppdateras hands_left och kollar om det finns 
+    några händer kvar att spela, gör det inte det så renderas vinnar templaten. När man dubllar så kommer också insatsen dubblas, dubbla knappen är bara tyckbar om 
+    man har coins att betta.
+</p>
+
+<h3>Split</h3>
+<p>
+    Split funktionen var nog den som tog längst tid att fixa också den som var mest utmanande, särskilt när det ska vara med flera spelare som spelar. 
+    Det jag först gjorde för spelaren är att kolla om den har två kort av samma värde dvs "K" och "K" vilket är ett måste för att då splitta. Sedan om 
+    spelaren väljer att splitta så delas den befintilga handen upp i två nya händer där vaje hand får ett nytt kort från kortleken. Här kom det en av de 
+    saker som tog mest tid för mig, att uppdatea status och poäng för varje ny enskilld hand. Jag valde efter många om och men att ändra status till "active" 
+    för hand1 och "waiting" för hand2. När en hand splittas så behövde jag sedan också dubbla instatsen av coins eftersom att varje hand ska har "original bettet". 
+    Dessutom behövde jag se till att hands_left justerades korrekt och att spelet fortsatte smidigt utan att förlora synk mellan olika spelares händer, här var det 
+    nog där jag fastnade näst mest med att uppdatera statusar för handen som spelades med (eller rättare sagt det var här jag insåg att jag behöve använda statusar) 
+    för när jag splittade och stannade eller busta på hand1 så skipapdes det till nästa spelare eller så avslutades spelet. Så där var det mycket tankekraft 
+    som gick åt för att få till en bra struktur. Men tillslut löste jag det och det blev en massa extra logik för att man skulle kunna spela fler än en spelare 
+    eftersom att man behöver hålla isär vem som spelar och vilka händer som tillhör vilken spelare. Sammantaget tog det tid och nu i efterhand tänker man bara 
+    hur dum är du som inte löste deta snabbar. :)
+</p>
+
+<h3>Lägga valfritt bet (för vaje spelare)</h3>
+<p>
+    Att implimentera denna funktion krävde mer tanke på hur jag skulle göra än hur lång tid det tog att implementera. Jag valde att göra det så att för varje 
+    spelare som ska spela så får man placera ett bet via ett formulär. Här säkerställs det att man inte kan betta mer än så mycket coins man har / så många spelare man är 
+    sedan kan man inte betta mindre än 100 coins heller. När formuläret skickades så sparas det för varje spelare vad deras bet är i Data i sessionen den här lösningen gav 
+    spelet en större flexibilitet och tillät spelarna att själva bestämma sina insatser. Här är det en utvecklings potential för att udnervika buggar och underlätta max bet, 
+    skulle jag göra om det skulle jag göra så att coins dras direkt från "kontot" när man bettar sedan om amn vinner får man tillbaka. För just nu så "dras"/"läggs till" coins 
+    när det bestäms vem som vann detta leder till att man kan betta och sedan se sin hand och sedan radera sessionen och börja om så man får en bättre hand. 
+</p>
+
+<h3>Scoreboard</h3>
+<p>
+    Är nog den "svåraste" kodmässigt men som inte tog så lång tid kontra hur svårt det var jag tror bara att ajg hamnade på rätt spår direkt. 
+    För att skapa en fungerande Scoreboard kopplat till User och hantera användarnas poäng och insatser använnde jag Doctrine ORM. 
+    Jag började med att skapa två entiteter, User och Scoreboard. User representerar användaren och innehåller inloggningsinformation, medan Scoreboard 
+    innehåller attribut som antal coins och en relation till en användare.
+
+    För att koppla User och Scoreboard skapade jag i Scoreboard en ManyToOne-relation till User vilket innebar att varje Scoreboard är kopplat till en specifik 
+    användare. Detta gjorde att jag enkelt kunde hämta och uppdatera rätt scoreboard baserat på den inloggade användaren. I User behövdes ingen specifik relation 
+    tillbaka eftersom fokus låg på att varje användare har ett eget Scoreboard.
+
+    Sedan genererade jag migrationsfiler med Doctrine för att skapa motsvarande tabeller i databasen vilket gav mig en tabell för användare och en för scoreboard 
+    där scoreboard innehåller en user_id-kolumn som kopplar till användarens id.
+
+    I applikationen använde jag Symfony Security för att hantera inloggning vilket gjorde det möjligt att genom $this->security->getUser() hämta den aktuella 
+    inloggade användaren. När en användare startade ett spel kollade jag om det redan fanns ett Scoreboard i databasen för den användaren. Om det inte fanns skapade 
+    jag ett nytt och satte standardvärden som 5000 coins (när spelaren startar blackjack) så att varje användare alltid hade ett Scoreboard.
+
+    När spelet pågick och insatser lades eller resultat beräknades använde jag Doctrine EntityManager för att hämta användarens Scoreboard uppdatera coins beroende på 
+    spelresultatet och spara ändringarna med persist() och flush(). Detta gjorde att alla uppdateringar skedde i realtid och sparades korrekt i databasen.
+
+    För att visa den globala scoreboarden där alla användares coins visas skapade jag en controller med en route som hämtade alla Scoreboard-poster och sorterade dem efter 
+    antal coins. Sedan skapade jag bara en template för att visa tabellen.
+
+    Detta flöde gjorde att varje användare kunde logga in sedan spela sedan få sin coins status uppdaterad och se en gemensam scoreboard över alla spelare som har spelat. 
+</p>
+
+
+
+{% endblock %}
