@@ -41,8 +41,8 @@
     man in när man ska felsöka något. :)
 </p>
 
-<form method="post" action="{{ path('reset_db') }}" onsubmit="return confirm('Är du säker på att du vill nollställa databasen? Detta går inte att ångra!')">
-    <button type="submit" class="btn btn-danger">Nollställ databas</button>
+<form action="{{ path('reset_db') }}" method="get" onsubmit="return confirm('Vill du verkligen nollställa databasen?')">
+    <button type="submit">Nollställ databas</button>
 </form>
 
 {% endblock %}

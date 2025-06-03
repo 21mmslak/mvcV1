@@ -54,28 +54,28 @@ class ProjectController extends AbstractController
     #[Route("/proj", name: "proj")]
     public function proj(): Response
     {
-        return $this->render('project/index.html.twig');
+        return $this->render('Project/index.html.twig');
     }
 
     #[Route("/proj/about/database", name: "proj_about_database")]
     public function projAboutData(): Response
     {
-        return $this->render('project/about_data.html.twig');
+        return $this->render('Project/about_data.html.twig');
     }
 
     #[Route("/proj/kravSex", name: "kravSex")]
     public function kravSex(): Response
     {
-        return $this->render('project/kravSex.html.twig');
+        return $this->render('Project/kravSex.html.twig');
     }
 
     #[Route("/proj/about", name: "about")]
     public function about(): Response
     {
-        return $this->render('project/about.html.twig');
+        return $this->render('Project/about.html.twig');
     }
 
-    #[Route('/admin/reset-db', name: 'reset_db', methods: ['POST'])]
+    #[Route('/reset-db', name: 'reset_db')]
     public function resetDatabase(EntityManagerInterface $em): Response
     {
         $connection = $em->getConnection();
@@ -84,7 +84,7 @@ class ProjectController extends AbstractController
         $connection->executeStatement($platform->getTruncateTableSQL('scoreboard', true));
         $connection->executeStatement($platform->getTruncateTableSQL('user', true));
     
-        return $this->render('project/about.html.twig');
+        return $this->render('Project/about.html.twig');
     }
 
     #[Route("/proj_main", name: "proj_main")]
@@ -98,7 +98,7 @@ class ProjectController extends AbstractController
             $start->start($data);
         }
 
-        return $this->render('project/gameSplit.html.twig', [
+        return $this->render('Project/gameSplit.html.twig', [
             'data' => $data->getAll(),
         ]);
     }
@@ -130,7 +130,7 @@ class ProjectController extends AbstractController
             $addDealer = new AddCardDealer();
             $addDealer->addCardDealer($data);
             $this->decideWinner->decideWinner($data);
-            return $this->render('project/winner_split.html.twig', ['data' => $data->getAll()]);
+            return $this->render('Project/winner_split.html.twig', ['data' => $data->getAll()]);
         }
     
         return $this->redirectToRoute('proj_main');
@@ -209,7 +209,7 @@ class ProjectController extends AbstractController
                 $addDealer = new AddCardDealer();
                 $addDealer->addCardDealer($data);
                 $this->decideWinner->decideWinner($data);
-                return $this->render('project/winner_split.html.twig', ['data' => $data->getAll()]);
+                return $this->render('Project/winner_split.html.twig', ['data' => $data->getAll()]);
             }
         }
 
@@ -235,7 +235,7 @@ class ProjectController extends AbstractController
             $addDealer = new AddCardDealer();
             $addDealer->addCardDealer($data);
             $this->decideWinner->decideWinner($data);
-            return $this->render('project/winner_split.html.twig', ['data' => $data->getAll()]);
+            return $this->render('Project/winner_split.html.twig', ['data' => $data->getAll()]);
         }
 
         return $this->redirectToRoute('proj_main');
@@ -294,7 +294,7 @@ class ProjectController extends AbstractController
     #[Route("/proj/api", name: "api_proj")]
     public function api(SessionInterface $session): Response
     {
-        return $this->render('project/api.html.twig');
+        return $this->render('Project/api.html.twig');
     }
 
     #[Route("/proj/api/get_next_card", name: "next_card")]

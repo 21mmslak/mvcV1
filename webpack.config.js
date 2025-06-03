@@ -6,6 +6,8 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
+const isProduction = Encore.isProduction();
+
 Encore
     .copyFiles({
         from: './assets/images',
@@ -14,7 +16,11 @@ Encore
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
     // public path used by the web server to access the output path
-    .setPublicPath('/build')
+    .setPublicPath(isProduction
+        ? '/~boba24/dbwebb-kurser/mvc/me/report/public/build/'
+        : '/build/'
+    )
+    .setManifestKeyPrefix('build/')
     // only needed for CDN's or subdirectory deploy
     //.setManifestKeyPrefix('build/')
 
@@ -25,7 +31,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('proj', './assets/styles/proj.css') 
+    .addEntry('proj', './assets/proj.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

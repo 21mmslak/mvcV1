@@ -84,5 +84,56 @@
         så mycket som jag inte tänkt på men också att jag vajre gpng jag skriver kod nu tänker på dessa aspekter som med 6c och att det inte blir att jag behöver ändra 
         massa i eftehand utan att jag skriver kod med det i tanken. Min TIL för detta kmom var helt kalr 6c. Tack för ännu en grym vecka! :)
     </p>
+    <h2 id="project">Project</h2>
+    <h2 id="krav1-3">Krav1-3</h2>
+    <p>
+        Jag började med att skapa en separat landningssida på /proj som är projektets start. Denna är länkad direkt från min report sidan navbar och fungerar 
+        som startsida för hela projektet. Jag bestämde mig för att bygga ett Blackjack sple. För att tydligt skilja det från report sidan 
+        byggde jag en egen stylesheet proj.css som använder andra färger, typsnitt och ett annat bildtema i headern och bakgrunden. Jag använde en separat Twig layout med en egen navbar 
+        som enbart visar projektets relaterade länkar.
+        Jag skapade också sidan /proj/about där jag kortfattat förklarar vad spelet går ut på och hur det fungerar och hur databasen är kopplad till användaren. 
+        I projektets README.md har jag inkluderat klickbara badges från Scrutinizer för build, coverage och quality och förklarat repots syfte. Dokumentationen innehåller även 
+        instruktioner för hur man klonar och kör webbplatsen lokalt.
+    </p>
+    <h2 id="krav4">Krav4</h2>
+    <p>
+        För att uppfylla Krav 4 implementerade jag ett JSON API som tidigare i kursen. Jag skapade totalt fem endpoints varav en är en POST route som används för att initiera ett nytt 
+        spel. Samtliga endpoints är tydligt länkade från sidan proj/api.
+        Jag började med att skapa en GET endpoint /proj/api/get_next_card som returnerar nästa kort i kortleken från sessionen. Därefter lade jag till /proj/api/scoreboard 
+        som hämtar alla spelare från databasen och sorterar dem efter coins som visar poängställningen.
+        För att kunna slå upp en enskild användare implementerade jag /proj/api/user_coins/{username} som tar användarnamnet som parameter och returnerar coins statusen alternativt 
+        ett felmeddelande om användaren inte hittas. Jag implementerade sedan /proj/api/player_cards som visar varje spelares händer, kort, poäng och status.
+        Slutligen lade jag till en POST-route /proj/api/start_game där ett nytt spel kan startas genom att initiera en ny session med speldata. Denna route använder sig av 
+        en separat klass för att hålla koden tydlig.
+    </p>
+    <h2 id="krav5">Krav5</h2>
+    <p>
+        Databasen består av två tabeller User och Scoreboard. I User sparas användarens information främst användarnamn och lösenord och i Scoreboard lagras varje 
+        spelares coins saldo. Det finns en relation mellan tabellerna där varje scoreboard är kopplad till en specifik användare via en ManyToOne relation. Jag gjorde  
+        ett ER-diagram som jag inkluderade på sidan /proj/about/database och där beskrev jag vad varje tabell används till samt relationen dem emellan.
+        Jag använde mig av SQLite för enkelhetens skull. För enhetstester skapade jag en separat testdatabas för att kunna testa funktioner utan att påverka den riktiga datan. 
+        Jag lyckades även få igång testerna på Scrutinizer genom att konfigurera så att testdatabasen laddades i testmiljö. Det tog en del arbete men fungerade till slut. Dock blev 
+        det bara ett test...
+    </p>
+    <h2 id="krav6">Krav6</h2>
+    <p>
+        För att lösa detta krav tänkt jag bara på vad jag gjort som tagit mycket tid och tankekraft, sedan skrev jag om vad jag hade gjort och lite om hur mina tankar gick. 
+        Vet inte vad mer man ska skriva. :)
+    </p>
+    <h2 id="projektet">Projektet</h2>
+    <p>
+        Projektet gick bra att genomföra, jag älakar att skapa spel och spciellt kortspel det finns sååå mycekt att tänka på och så mycket små saker man behöver hålla reda på. 
+        Jag tycekr att tidsmässig så tog det nog lite längre tid än vad det borde (kan vara föra att jag jobbar som testare så jag hittade massa små fel som rättaren säkert 
+        inte hade hittat... men det ska vara åtgärdat efter många timmar :) ) Jag tycker att projektet var en väldigt rimlig nivå där man verkligen fick testas på det man lärt sig 
+        under kursens gång. 
+    </p>
+    <h2 id="tankar">Tankar</h2>
+    <p>
+        Mina tankar om kursen är att det var lite klurigt i böjan med nytt ramverk och nytt sätt att tänka på med controllers osv men efter någon vecka så landade man i det 
+        och jag gillar verkligen den tydliga strukturen man fick av att jobba på detta sätt. Så nu i sommar kommer jag defenitvt fortsätta jobba på detta sätt när jag ska göra 
+        en tränings hemsida där man sparar alla sina lyft i en databas (får se om det blir med ORM eller SQL toligen SQL) där man kan välja vilket lyft man ska köra och sedan 
+        får ut statestik från förgående pass i ett diagram. Sedan när jag är klar med det blir det nog ett till kortspel. :) Jag är väldigt nöjd med denna kurs en stark 9 får kursen 
+        av mig, tack för ännu en bra kurs! :)
+    </p>
 </div>
 {% endblock %}

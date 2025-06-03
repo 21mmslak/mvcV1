@@ -26,4 +26,8 @@
     </tbody>
 </table>
 
+<form action="{{ path('reset_db') }}" method="get" onsubmit="return confirm('Vill du verkligen nollställa databasen?')">
+    <button type="submit">Nollställ databas</button>
+</form>
+
 {% endblock %}

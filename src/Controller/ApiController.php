@@ -166,14 +166,14 @@ class ApiController extends AbstractController
     #[Route("api/library/book/{isbn<\d+>}", name: "book_by_isbn_api")]
     public function bookIsbnApi(
         BooksRepository $booksRepository,
-        int $isbn
+        string $isbn
     ): Response {
         $book = $booksRepository->findOneBy(['ISBN' => $isbn]);
-
+    
         if (!$book) {
             return new JsonResponse(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
         }
-
+    
         $data = [
             'id' => $book->getId(),
             'titel' => $book->getTitel(),
@@ -181,7 +181,7 @@ class ApiController extends AbstractController
             'författare' => $book->getFörfattare(),
             'bild' => $book->getBild()
         ];
-
+    
         return new JsonResponse($data);
     }
 }
