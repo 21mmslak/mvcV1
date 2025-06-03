@@ -88,6 +88,10 @@
                 <a href="namespaces/app-repository.html" class="">Repository</a>
                 
             </li>
+                    <li>
+                <a href="namespaces/app-user.html" class="">User</a>
+                
+            </li>
             </ul>
 
                         </section>
@@ -142,7 +146,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">8</span>
+    <span class="phpdocumentor-element-found-in__line">10</span>
 
     </aside>
 
@@ -169,6 +173,25 @@
 
 
 
+<h4 id="toc-properties">
+    Properties
+    <a href="classes/App-Project-StartBlackJack.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/App-Project-StartBlackJack.html#property_em">$em</a>
+    <span>
+                        &nbsp;: <abbr title="\Doctrine\ORM\EntityManagerInterface">EntityManagerInterface</abbr>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/App-Project-StartBlackJack.html#property_security">$security</a>
+    <span>
+                        &nbsp;: <abbr title="\Symfony\Bundle\SecurityBundle\Security">Security</abbr>            </span>
+</dt>
+
+    </dl>
 
 <h4 id="toc-methods">
     Methods
@@ -177,10 +200,36 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/App-Project-StartBlackJack.html#method___construct">__construct()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/App-Project-StartBlackJack.html#method_start">start()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/App-Project-StartBlackJack.html#method_initializeDealer">initializeDealer()</a>
+    <span>
+                                &nbsp;: array{card_one: array<string,mixed>, card_two: array<string,mixed>, remaining_deck: array<int,array<string,mixed>>}    </span>
+</dt>
+<dd>Gives card to dealer</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/App-Project-StartBlackJack.html#method_initializePlayerCoins">initializePlayerCoins()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/App-Project-StartBlackJack.html#method_initializePlayers">initializePlayers()</a>
+    <span>
+                                &nbsp;: array&lt;string, array{hands: array<string,array{cards: array, points: int, status: string, bet: ?int}>}&gt;    </span>
+</dt>
+<dd>Initialize players with default hands.</dd>
 
     </dl>
 
@@ -189,6 +238,85 @@
         
 
         
+    <section class="phpdocumentor-properties">
+        <h3 class="phpdocumentor-elements__header" id="properties">
+            Properties
+            <a href="classes/App-Project-StartBlackJack.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_em">
+        $em
+        <a href="classes/App-Project-StartBlackJack.html#property_em" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">13</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\Doctrine\ORM\EntityManagerInterface">EntityManagerInterface</abbr></span>
+    <span class="phpdocumentor-signature__name">$em</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_security">
+        $security
+        <a href="classes/App-Project-StartBlackJack.html#property_security" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">12</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\Symfony\Bundle\SecurityBundle\Security">Security</abbr></span>
+    <span class="phpdocumentor-signature__name">$security</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+            </section>
 
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
@@ -196,6 +324,57 @@
             <a href="classes/App-Project-StartBlackJack.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method___construct">
+        __construct()
+        <a href="classes/App-Project-StartBlackJack.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">15</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Symfony\Bundle\SecurityBundle\Security">Security</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$security</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Doctrine\ORM\EntityManagerInterface">EntityManagerInterface</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$em</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$security</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\Symfony\Bundle\SecurityBundle\Security">Security</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$em</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\Doctrine\ORM\EntityManagerInterface">EntityManagerInterface</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
                     <article
         class="phpdocumentor-element
             -method
@@ -210,7 +389,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">21</span>
 
     </aside>
 
@@ -239,6 +418,154 @@
     
 
     
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_initializeDealer">
+        initializeDealer()
+        <a href="classes/App-Project-StartBlackJack.html#method_initializeDealer" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">75</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Gives card to dealer</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">initializeDealer</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;int, array&lt;string, mixed&gt;&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$deck</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array{card_one: array<string,mixed>, card_two: array<string,mixed>, remaining_deck: array<int,array<string,mixed>>}</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$deck</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;int, array&lt;string, mixed&gt;&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Array of cards</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array{card_one: array<string,mixed>, card_two: array<string,mixed>, remaining_deck: array<int,array<string,mixed>>}</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_initializePlayerCoins">
+        initializePlayerCoins()
+        <a href="classes/App-Project-StartBlackJack.html#method_initializePlayerCoins" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">48</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">initializePlayerCoins</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/App-Project-Data.html"><abbr title="\App\Project\Data">Data</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$data</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/App-Project-Data.html"><abbr title="\App\Project\Data">Data</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_initializePlayers">
+        initializePlayers()
+        <a href="classes/App-Project-StartBlackJack.html#method_initializePlayers" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Project/StartBlackJack.php"><a href="files/src-project-startblackjack.html"><abbr title="src/Project/StartBlackJack.php">StartBlackJack.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">96</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Initialize players with default hands.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">initializePlayers</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/App-Project-Data.html"><abbr title="\App\Project\Data">Data</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string, array{hands: array<string,array{cards: array, points: int, status: string, bet: ?int}>}&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$data</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/App-Project-Data.html"><abbr title="\App\Project\Data">Data</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string, array{hands: array<string,array{cards: array, points: int, status: string, bet: ?int}>}&gt;</span>
+            </section>
+
 </article>
             </section>
 
@@ -345,15 +672,27 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                                                <li><a href="classes/App-Project-StartBlackJack.html#toc-methods">Methods</a></li>
+                                                            <li><a href="classes/App-Project-StartBlackJack.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/App-Project-StartBlackJack.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
+                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/App-Project-StartBlackJack.html#property_em">$em</a></li>
+                                                    <li class=""><a href="classes/App-Project-StartBlackJack.html#property_security">$security</a></li>
+                                            </ul>
+                </li>
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/App-Project-StartBlackJack.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/App-Project-StartBlackJack.html#method_start">start()</a></li>
+                                            <li class=""><a href="classes/App-Project-StartBlackJack.html#method_initializeDealer">initializeDealer()</a></li>
+                                            <li class=""><a href="classes/App-Project-StartBlackJack.html#method_initializePlayerCoins">initializePlayerCoins()</a></li>
+                                            <li class=""><a href="classes/App-Project-StartBlackJack.html#method_initializePlayers">initializePlayers()</a></li>
                                     </ul>
             </li>
                     </ul>

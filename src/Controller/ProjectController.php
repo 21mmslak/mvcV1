@@ -69,6 +69,24 @@ class ProjectController extends AbstractController
         return $this->render('project/kravSex.html.twig');
     }
 
+    #[Route("/proj/about", name: "about")]
+    public function about(): Response
+    {
+        return $this->render('project/about.html.twig');
+    }
+
+    #[Route('/admin/reset-db', name: 'reset_db', methods: ['POST'])]
+    public function resetDatabase(EntityManagerInterface $em): Response
+    {
+        $connection = $em->getConnection();
+        $platform = $connection->getDatabasePlatform();
+    
+        $connection->executeStatement($platform->getTruncateTableSQL('scoreboard', true));
+        $connection->executeStatement($platform->getTruncateTableSQL('user', true));
+    
+        return $this->render('project/about.html.twig');
+    }
+
     #[Route("/proj_main", name: "proj_main")]
     public function projMain(SessionInterface $session): Response
     {

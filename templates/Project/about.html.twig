@@ -1,0 +1,17 @@
+{% extends "projectBase.html.twig" %}
+
+{% block title %}About{% endblock %}
+
+{% block body %}
+<h1>About</h1>
+
+<h3>Blackjack</h3>
+<p>
+    Jag har valt att bygga ett blackjack spel där man kan välja att spela mellan 1 och 3 spelare mot en dealer. För vaje spelare så kan man ta kort, 
+    stanna om man känner sig nöjd med sin hand, man kan dubbla vilket innebär att man tar ett kort och dubblar instatsen, man kan också splitta om 
+    det är så att ens hand består av två kort av samma värde. Det går också att skapa en user via "log in" där man får registera en ny användare om 
+    man inte har ett konto. Sedan när man startar blackjack spelet så spelar man som sin användare och försöker få så mycket coins som möjligt, 
+    det finns sedan en scoreboard som visas över alla användare. Man kan också välja att spela som "gäst" det innebär att ens coins bara sparas i sessionen. :)
+</p>
+
+{% endblock %}
